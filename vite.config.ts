@@ -1,0 +1,15 @@
+import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+import path from "node:path";
+import { normalizePath } from "vite";
+
+export default defineConfig({
+  root: './src',
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      '@': normalizePath(path.resolve(__dirname, 'src')),
+    },
+  },
+});

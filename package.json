@@ -1,0 +1,29 @@
+{
+  "name": "taxi-service-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
+    "@tailwindcss/vite": "^4.1.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "autoprefixer": "^10.4.22",
+    "axios": "^1.13.2",
+    "postcss": "^8.5.6",
+    "react": "^19.2.1",
+    "react-router-dom": "^7.10.1",
+    "tailwind": "^4.0.0",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.6",
+    "zustand": "^5.0.9"
+  }
+}
