@@ -1,7 +1,7 @@
 // src/hooks/useAxios.ts
 import { useState, useEffect, useCallback } from "react";
 
-export function useAxios<T = any>(hook) {
+export function useAxios<T = any>(hook: () => Promise<{ data: T }>) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<any>(null);
