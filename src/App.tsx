@@ -7,6 +7,12 @@ import { HomeRoute } from './pages/Home';
 import { DashboardRoute } from './pages/Dashboard';
 import { UsersRoute } from './pages/users/list';
 import { UserRoute } from './pages/users/detail';
+import { OrdersRoute } from './pages/orders/list';
+import { OrderRoute } from './pages/orders/detail';
+import { DriversRoute } from './pages/drivers/list';
+import { DriverRoute } from './pages/drivers/detail';
+import { CarsRoute } from './pages/cars/list';
+import { CarRoute } from './pages/cars/detail';
 
 export function App() {
   return (
@@ -19,6 +25,12 @@ export function App() {
               {DashboardRoute}
               {UsersRoute}
               {UserRoute}
+              {OrderRoute}
+              {OrdersRoute}
+              {DriversRoute}
+              {DriverRoute}
+              {CarsRoute}
+              {CarRoute}
           </Routes>
         </div>
     </BrowserRouter>

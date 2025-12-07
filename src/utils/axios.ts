@@ -9,7 +9,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOSwicm9sZSI6ImNsaWVudCIsImV4cCI6MTc2NTEwNDkzM30.mEXArDoZfMsE67TYz_qfRykIN9yFdB_OtSceF3mouJs";
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOSwicm9sZSI6ImNsaWVudCIsImV4cCI6MTc2NTEyNTcxN30.2g6L2Bxu4T-OiX-ZuUixQzEvQrpNGPbExp71oLEurPs";
   if (token) config.headers.Token = `${token}`;
   return config;
 });

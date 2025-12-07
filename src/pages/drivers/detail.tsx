@@ -1,21 +1,21 @@
-import React from 'react';
+import React, { use } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Route, useParams } from 'react-router-dom';
 
-import { useUser, useUsers } from '../../hooks/users';
+import { useDriver } from '@/hooks/drivers';
 import { useOrders } from '@/hooks/orders';
 import { Prettylink } from '@/components/link';
 import { Table, TableBody, TableHeaderCell, TableHeader, TableCell, TableRow } from '../../components/table';
 import { QuickActionsPanel } from '@/components/quick_actions';
 
-export const UserRoute = (
-  <Route path="/users/:id" element={<PageComponent />} />
+export const DriverRoute = (
+  <Route path="/drivers/:id" element={<PageComponent />} />
 );
 
 function PageComponent() { 
     const { id } = useParams<{ id: string }>(); 
-    const { data: user, loading, error } = useUser(id!);
-    const { data: orders, loading: ordersLoading, error: ordersError } = useOrders(id);
+    const { data: user, loading, error } = useDriver(id!);
+    const { data: orders, loading: ordersLoading, error: ordersError } = useOrders(undefined, id);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
@@ -34,6 +34,7 @@ function PageComponent() {
               <p>Email: {user?.email}</p>
               <p>Tel Number: {user?.tel_number}</p>
               <p>Role: {user?.role}</p>
+              <p>Car: <Prettylink to={`/cars/${user?.car.id}`}>{user?.car.mark} {user?.car.model}</Prettylink></p>
               <p>Created At: {new Date(user!.created_at).toLocaleString()}</p>
             </div>
         </div>

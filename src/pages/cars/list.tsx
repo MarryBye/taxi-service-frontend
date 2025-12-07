@@ -2,18 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Route } from 'react-router-dom';
 
-import { useUsers } from '../../hooks/users';
+import { useCars } from '@/hooks/cars';
 
 import { Table, TableBody, TableHeaderCell, TableHeader, TableCell, TableRow } from '../../components/table';
 import { Prettylink } from '@/components/link';
 import { QuickActionsPanel } from '@/components/quick_actions';
 
-export const UsersRoute = (
-  <Route path="/users" element={<PageComponent />} />
+export const CarsRoute = (
+  <Route path="/cars" element={<PageComponent />} />
 );
 
 function PageComponent() {
-    const { data: users, loading, error } = useUsers();
+    const { data: cars, loading, error } = useCars();
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
@@ -41,47 +41,47 @@ function PageComponent() {
 
   return (
     <div className="flex flex-col gap-4 p-4 w-full overflow-auto">
-      <p className='text-2xl font-bold'>Users List</p>
+      <p className='text-2xl font-bold'>Cars List</p>
       <QuickActionsPanel>
-        <Prettylink to={`/users/create`}>Create</Prettylink>
+        <Prettylink to={`/cars/create`}>Create</Prettylink>
       </QuickActionsPanel>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHeaderCell>
-              <input type='text' placeholder='Search by ID' id="search-id" onChange={handleSearch}></input>
+              <input type="text" placeholder="Search by ID" id="search-id" onChange={handleSearch}/>
             </TableHeaderCell>
             <TableHeaderCell>
-              <input type='text' placeholder='Search by Name' id="search-name" onChange={handleSearch}></input>
+                <input type="text" placeholder="Search by mark" id="search-mark" onChange={handleSearch}/>
             </TableHeaderCell>
             <TableHeaderCell>
-              <input type='text' placeholder='Search by Email' id="search-email" onChange={handleSearch}></input>
+                <input type="text" placeholder="Search by model" id="search-model" onChange={handleSearch}/>
             </TableHeaderCell>
             <TableHeaderCell>
-              <input type='text' placeholder='Search by Tel Number' id="search-tel" onChange={handleSearch}></input>
+                <input type="text" placeholder="Search by class" id="search-class" onChange={handleSearch}/>
             </TableHeaderCell>
             <TableHeaderCell>
-              <input type='text' placeholder='Search by Role' id="search-role" onChange={handleSearch}></input>
+                <input type="text" placeholder="Search by status" id="search-status" onChange={handleSearch}/>
+            </TableHeaderCell>
+            <TableHeaderCell>
+                <input type="text" placeholder="Search by driver" id="search-driver" onChange={handleSearch}/>
             </TableHeaderCell>
             <TableHeaderCell>Actions</TableHeaderCell>          
           </TableRow>
       </TableHeader >
         <TableBody>
           {
-            users
-              .map(user => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.id}</TableCell>
+            cars
+              .map(car => (
+                <TableRow key={car.id}>
+                  <TableCell>{car.id}</TableCell>
+                  <TableCell>{car.mark}</TableCell>
+                  <TableCell>{car.model}</TableCell>
+                  <TableCell>{car.car_class}</TableCell>
+                  <TableCell>{car.car_status}</TableCell>
+                  <TableCell>{car.driver ? <Prettylink to={`/drivers/${car.driver.id}`}>{`${car.driver.first_name} ${car.driver.last_name}`}</Prettylink> : 'No driver'}</TableCell>
                   <TableCell>
-                    <Prettylink to={`/users/${user.id}`}>
-                      {user.first_name + " " + user.last_name}
-                    </Prettylink>
-                  </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.tel_number}</TableCell>
-                  <TableCell>{user.role}</TableCell>
-                  <TableCell>
-                      <Prettylink to={`/users/${user.id}`}>View</Prettylink>
+                    <Prettylink to={`/cars/${car.id}`}>View</Prettylink>
                   </TableCell>
                 </TableRow>
               ))
