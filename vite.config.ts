@@ -5,7 +5,6 @@ import path from "node:path";
 import { normalizePath } from "vite";
 
 export default defineConfig({
-  root: './src',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

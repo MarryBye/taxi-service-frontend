@@ -1,38 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes } from 'react-router-dom';
-import { HeaderComponent } from './components/header';
-import { NavPanel } from './components/navpanel';
-import { HomeRoute } from './pages/Home';
-import { DashboardRoute } from './pages/Dashboard';
-import { UsersRoute } from './pages/users/list';
-import { UserRoute } from './pages/users/detail';
-import { OrdersRoute } from './pages/orders/list';
-import { OrderRoute } from './pages/orders/detail';
-import { DriversRoute } from './pages/drivers/list';
-import { DriverRoute } from './pages/drivers/detail';
-import { CarsRoute } from './pages/cars/list';
-import { CarRoute } from './pages/cars/detail';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+
+import HomePage from '@/pages/Home';
+import LoginPage from '@/pages/Login';
+import RegisterPage from '@/pages/Register';
+import CurrentOrderPage from '@/pages/CurrentOrder';
+import MakeOrderPage from '@/pages/MakeOrder';
+import CareersPage from "@/pages/Careers";
+import AboutPage from "@/pages/About";
 
 export function App() {
-  return (
-    <BrowserRouter>
-        <HeaderComponent />
-        <div className="flex row min-h-0 overflow-hidden">
-          <NavPanel />
+    return (
+        <BrowserRouter>
           <Routes>
-              {HomeRoute}
-              {DashboardRoute}
-              {UsersRoute}
-              {UserRoute}
-              {OrderRoute}
-              {OrdersRoute}
-              {DriversRoute}
-              {DriverRoute}
-              {CarsRoute}
-              {CarRoute}
+              <Route path='/' element={<HomePage />} />
+              <Route path='/careers' element={<CareersPage />} />
+              <Route path='/about' element={<AboutPage />} />
+              <Route path='/login' element={<LoginPage />} />
+              <Route path='/register' element={<RegisterPage />} />
+              <Route path='/current-order' element={<CurrentOrderPage />} />
+              <Route path='/make-order' element={<MakeOrderPage />} />
           </Routes>
-        </div>
-    </BrowserRouter>
-  );
+        </BrowserRouter>
+    );
 }
