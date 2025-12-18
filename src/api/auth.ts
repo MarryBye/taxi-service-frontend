@@ -1,29 +1,10 @@
-import api from './api';
+import api from '@/utils/api';
+import type { AuthUserSchema, RegisterUserSchema } from "@/types/auth";
 
-export type LoginPayload = {
-    login: string;
-    password: string;
-};
-
-export type RegisterPayload = {
-    login: string;
-    email: string;
-    tel_number: string;
-    password: string;
-    first_name: string;
-    last_name: string;
-    country: string;
-    city: string;
-};
-
-export async function login(payload: LoginPayload) {
+export async function login(payload: AuthUserSchema) {
     return api.post('/login', payload);
 }
 
-export async function register(payload: RegisterPayload) {
+export async function register(payload: RegisterUserSchema) {
     return api.post('/register', payload);
-}
-
-export async function logout() {
-    return api.get('/logout');
 }

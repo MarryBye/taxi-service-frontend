@@ -1,28 +1,26 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
 
 import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
-import { useAuth } from "@/hooks/useAuth";
-import type { RegisterUserSchema } from "@/types/auth";
+import { useClientUpdateProfile } from "@/hooks/useClients";
+import type { UpdateProfile } from "@/types/clients";
 
-export default function RegisterPage(): React.ReactElement {
+export default function UpdateProfile(): React.ReactElement {
     const navigate = useNavigate();
-    const { register } = useAuth();
+    const { mutate, loading, error } = useClientUpdateProfile();
 
-    const [form, setForm] = useState<RegisterUserSchema>({
-        login: "",
+    const [form, setForm] = useState<UpdateProfile>({
         email: "",
-        tel_number: "",
-        password: "",
         first_name: "",
         last_name: "",
-        country: "Ukraine",
-        city: "Kyiv",
+        tel_number: "",
+        country_name: "Ukraine",
+        city_name: "Odessa",
+        password: "",
     });
 
     function handleChange(
@@ -36,15 +34,15 @@ export default function RegisterPage(): React.ReactElement {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        await register(form);
-        navigate("/login");
+        await mutate(form);
+        navigate("/profile");
     }
 
     return (
         <DefaultLayout>
             <section className="max-w-lg mx-auto px-8 py-20">
                 <h1 className={`${TEXT.title} text-3xl mb-6`}>
-                    Регистрация
+                    Редактирование профиля
                 </h1>
 
                 <form
@@ -52,21 +50,10 @@ export default function RegisterPage(): React.ReactElement {
                     className="flex flex-col gap-5"
                 >
                     <input
-                        name="login"
-                        placeholder="Логин"
-                        value={form.login}
-                        onChange={handleChange}
-                        required
-                        className="w-full border border-gray-300 rounded px-4 py-2"
-                    />
-
-                    <input
-                        type="email"
                         name="email"
                         placeholder="Email"
                         value={form.email}
                         onChange={handleChange}
-                        required
                         className="w-full border border-gray-300 rounded px-4 py-2"
                     />
 
@@ -75,7 +62,6 @@ export default function RegisterPage(): React.ReactElement {
                         placeholder="Номер телефона"
                         value={form.tel_number}
                         onChange={handleChange}
-                        required
                         className="w-full border border-gray-300 rounded px-4 py-2"
                     />
 
@@ -85,7 +71,6 @@ export default function RegisterPage(): React.ReactElement {
                             placeholder="Имя"
                             value={form.first_name}
                             onChange={handleChange}
-                            required
                             className="w-1/2 border border-gray-300 rounded px-4 py-2"
                         />
                         <input
@@ -93,15 +78,14 @@ export default function RegisterPage(): React.ReactElement {
                             placeholder="Фамилия"
                             value={form.last_name}
                             onChange={handleChange}
-                            required
                             className="w-1/2 border border-gray-300 rounded px-4 py-2"
                         />
                     </div>
 
                     <div className="flex gap-2">
                         <select
-                            name="country"
-                            value={form.country}
+                            name="country_name"
+                            value={form.country_name}
                             onChange={handleChange}
                             className="w-1/2 border border-gray-300 rounded px-4 py-2"
                         >
@@ -109,8 +93,8 @@ export default function RegisterPage(): React.ReactElement {
                         </select>
 
                         <select
-                            name="city"
-                            value={form.city}
+                            name="city_name"
+                            value={form.city_name}
                             onChange={handleChange}
                             className="w-1/2 border border-gray-300 rounded px-4 py-2"
                         >
@@ -123,29 +107,30 @@ export default function RegisterPage(): React.ReactElement {
                     <input
                         type="password"
                         name="password"
-                        placeholder="Пароль"
+                        placeholder="Новый пароль"
                         value={form.password}
                         onChange={handleChange}
-                        required
                         className="w-full border border-gray-300 rounded px-4 py-2"
                     />
 
-                    <button
-                        type="submit"
-                        className={BUTTON.default}
-                    >
-                        Зарегистрироваться
-                    </button>
-                </form>
+                    <div className="flex gap-4">
+                        <button
+                            type="submit"
+                            className={BUTTON.default}
+                            disabled={loading}
+                        >
+                            Сохранить
+                        </button>
 
-                <div className="mt-6">
-                    <p className={TEXT.accent_1}>
-                        Уже есть аккаунт?{" "}
-                        <Link to="/login" className={LINK.default}>
-                            Войти
-                        </Link>
-                    </p>
-                </div>
+                        <button
+                            type="button"
+                            className={BUTTON.transparent}
+                            onClick={() => navigate("/profile")}
+                        >
+                            Отмена
+                        </button>
+                    </div>
+                </form>
             </section>
         </DefaultLayout>
     );
