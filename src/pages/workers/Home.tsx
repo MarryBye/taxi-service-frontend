@@ -58,14 +58,14 @@ export default function DriverHomePage(): React.ReactElement | null {
 
                     <div className="flex flex-col gap-3 pt-4">
                         <Link
-                            to="/driver/history"
+                            to="/worker/history"
                             className={BUTTON.transparent}
                         >
                             История поездок
                         </Link>
 
                         <Link
-                            to="/driver/stats"
+                            to="/worker/stats"
                             className={BUTTON.transparent}
                         >
                             Статистика

@@ -15,13 +15,13 @@ export type Car = BaseCar<{
     id: number;
     created_at: string;
     changed_at: string;
-    driver_id?: number;
+    driver_id?: number | undefined;
 }>;
 
 export type CreateCar = BaseCar<{
-    driver_id?: number;
+    driver_id?: number | undefined;
 }>;
 
 export type UpdateCar = BaseCar<{
-    driver_id?: number;
+    driver_id?: number | undefined;
 }>
