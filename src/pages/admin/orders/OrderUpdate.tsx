@@ -6,51 +6,58 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { TEXT } from "@/styles/Text";
 import { BUTTON } from "@/styles/Button";
 
-import { useUpdateOrder } from "@/hooks/admin/useOrders";
-import type { OrderStatus } from "@/types/db";
+import { useUpdateOrder } from "@/hooks/useAdmin";
+import type { UpdateOrderSchema } from "@/types/admin";
+import type { OrderStatuses, CarClasses } from "@/types/enums/db";
 
 export default function AdminOrderUpdatePage(): React.ReactElement {
     const navigate = useNavigate();
     const { orderId } = useParams<{ orderId: string }>();
     const id = orderId ? Number(orderId) : null;
 
-    const { mutate: updateOrder, loading, error } = useUpdateOrder(orderId);
+    if (!id) {
+        return (
+            <AdminLayout>
+                <p className={TEXT.accent_1}>Некорректный ID заказа</p>
+            </AdminLayout>
+        );
+    }
 
-    const [form, setForm] = useState<{
-        status: OrderStatus;
-    }>({
+    const { mutate: updateOrder, loading, error } = useUpdateOrder(id);
+
+    const [form, setForm] = useState<UpdateOrderSchema>({
         status: "searching_for_driver",
+        order_class: "standard",
     });
 
     function handleChange(
         e: React.ChangeEvent<HTMLSelectElement>
     ) {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value } = e.target;
+
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        if (!id) return;
 
-        await updateOrder({
-            status: form.status,
-        });
-
+        await updateOrder(form);
         navigate(`/admin/orders/${id}`);
     }
 
     return (
         <AdminLayout>
-            <section className="max-w-xl flex flex-col gap-8">
+            <section className="max-w-xl mx-auto px-8 py-16 flex flex-col gap-8">
+                {/* HEADER */}
                 <div>
                     <h1 className={`${TEXT.title} text-3xl mb-2`}>
                         Редактирование заказа
                     </h1>
                     <p className={TEXT.accent_1}>
-                        Изменение статуса заказа
+                        Изменение статуса и класса автомобиля
                     </p>
                 </div>
 
@@ -60,10 +67,12 @@ export default function AdminOrderUpdatePage(): React.ReactElement {
                     </div>
                 )}
 
+                {/* FORM */}
                 <form
                     onSubmit={handleSubmit}
                     className="flex flex-col gap-6 bg-white border border-gray-200 rounded p-6"
                 >
+                    {/* STATUS */}
                     <div className="flex flex-col gap-2">
                         <label className={TEXT.accent_2}>
                             Статус заказа
@@ -75,31 +84,45 @@ export default function AdminOrderUpdatePage(): React.ReactElement {
                             onChange={handleChange}
                             className="border border-gray-300 rounded px-4 py-2"
                         >
-                            <option value="searching_for_driver">
-                                searching_for_driver
-                            </option>
-                            <option value="waiting_for_driver">
-                                waiting_for_driver
-                            </option>
-                            <option value="waiting_for_client">
-                                waiting_for_client
-                            </option>
-                            <option value="in_progress">
-                                in_progress
-                            </option>
-                            <option value="waiting_for_marks">
-                                waiting_for_marks
-                            </option>
-                            <option value="completed">
-                                completed
-                            </option>
-                            <option value="canceled">
-                                canceled
-                            </option>
+                            {[
+                                "searching_for_driver",
+                                "waiting_for_driver",
+                                "waiting_for_client",
+                                "in_progress",
+                                "waiting_for_marks",
+                                "completed",
+                                "canceled",
+                            ].map((s) => (
+                                <option key={s} value={s}>
+                                    {s}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
-                    <div className="flex gap-4">
+                    {/* CAR CLASS */}
+                    <div className="flex flex-col gap-2">
+                        <label className={TEXT.accent_2}>
+                            Класс автомобиля
+                        </label>
+
+                        <select
+                            name="order_class"
+                            value={form.order_class}
+                            onChange={handleChange}
+                            className="border border-gray-300 rounded px-4 py-2"
+                        >
+                            {["standard", "comfort", "business"].map(
+                                (c) => (
+                                    <option key={c} value={c}>
+                                        {c}
+                                    </option>
+                                )
+                            )}
+                        </select>
+                    </div>
+
+                    <div className="flex gap-4 pt-4">
                         <button
                             type="submit"
                             className={BUTTON.default}

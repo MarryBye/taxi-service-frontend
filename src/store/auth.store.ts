@@ -1,14 +1,17 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { UsersView } from "@/types/views";
 
 type AuthState = {
     accessToken: string | null;
     tokenType: string | null;
 
+    user: UsersView | null;
     isAuthenticated: boolean;
 
     setToken: (accessToken: string, tokenType: string) => void;
-    clearToken: () => void;
+    setUser: (user: UsersView) => void;
+    clearAuth: () => void;
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -16,6 +19,7 @@ export const useAuthStore = create<AuthState>()(
         (set) => ({
             accessToken: null,
             tokenType: null,
+            user: null,
             isAuthenticated: false,
 
             setToken: (accessToken, tokenType) =>
@@ -25,15 +29,19 @@ export const useAuthStore = create<AuthState>()(
                     isAuthenticated: true,
                 }),
 
-            clearToken: () =>
+            setUser: (user) =>
+                set({ user }),
+
+            clearAuth: () =>
                 set({
                     accessToken: null,
                     tokenType: null,
+                    user: null,
                     isAuthenticated: false,
                 }),
         }),
         {
-            name: 'auth-storage',
+            name: "auth-storage",
         }
     )
 );

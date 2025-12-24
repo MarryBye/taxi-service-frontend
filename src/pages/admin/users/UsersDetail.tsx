@@ -4,18 +4,30 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 
 import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
-import { useUser, useDeleteUser } from "@/hooks/admin/useUsers";
+import {
+    useUserInfo,
+    useDeleteUser,
+} from "@/hooks/useAdmin";
+
+import type { UsersView } from "@/types/views";
 
 export default function AdminUserDetailPage(): React.ReactElement {
     const navigate = useNavigate();
     const { userId } = useParams<{ userId: string }>();
     const id = userId ? Number(userId) : null;
 
-    const { data: user, loading, error } = useUser(id);
-    const { mutate: deleteUser, loading: deleteLoading } = useDeleteUser();
+    const {
+        data: user,
+        loading,
+        error,
+    } = useUserInfo(id);
+
+    const {
+        mutate: deleteUser,
+        loading: deleteLoading,
+    } = useDeleteUser(id!);
 
     if (loading) {
         return (
@@ -36,21 +48,22 @@ export default function AdminUserDetailPage(): React.ReactElement {
     }
 
     async function handleDelete() {
-        if (!id) return;
         if (!confirm("Удалить пользователя?")) return;
 
-        await deleteUser(id);
+        await deleteUser();
         navigate("/admin/users");
     }
 
+    const u: UsersView = user;
+
     return (
         <AdminLayout>
-            <section className="max-w-3xl flex flex-col gap-8">
-                {/* ===== HEADER ===== */}
+            <section className="max-w-3xl mx-auto px-8 py-16 flex flex-col gap-8">
+                {/* HEADER */}
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className={`${TEXT.title} text-3xl mb-2`}>
-                            Пользователь #{user.id}
+                            Пользователь #{u.id}
                         </h1>
                         <p className={TEXT.accent_1}>
                             Детальная информация
@@ -65,56 +78,41 @@ export default function AdminUserDetailPage(): React.ReactElement {
                     </Link>
                 </div>
 
-                {/* ===== INFO ===== */}
+                {/* INFO */}
                 <div className="border border-gray-200 rounded bg-white p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <p className={TEXT.accent_2}>Имя</p>
-                        <p className={TEXT.default}>
-                            {user.first_name} {user.last_name}
-                        </p>
-                    </div>
+                    <Info label="Имя">
+                        {u.first_name} {u.last_name}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Роль</p>
-                        <p className={TEXT.default}>{user.role}</p>
-                    </div>
+                    <Info label="Роль">
+                        <RoleBadge role={u.role} />
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Email</p>
-                        <p className={TEXT.default}>{user.email}</p>
-                    </div>
+                    <Info label="Email">
+                        {u.email}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Телефон</p>
-                        <p className={TEXT.default}>{user.tel_number}</p>
-                    </div>
+                    <Info label="Телефон">
+                        {u.tel_number}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Локация</p>
-                        <p className={TEXT.default}>
-                            {user.city}, {user.country}
-                        </p>
-                    </div>
+                    <Info label="Локация">
+                        {u.city.country.full_name}, {u.city.name}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Создан</p>
-                        <p className={TEXT.default}>
-                            {new Date(user.created_at).toLocaleString()}
-                        </p>
-                    </div>
+                    <Info label="Создан">
+                        {new Date(u.created_at).toLocaleString()}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Обновлён</p>
-                        <p className={TEXT.default}>
-                            {new Date(user.changed_at).toLocaleString()}
-                        </p>
-                    </div>
+                    <Info label="Обновлён">
+                        {new Date(u.changed_at).toLocaleString()}
+                    </Info>
                 </div>
 
-                {/* ===== ACTIONS ===== */}
+                {/* ACTIONS */}
                 <div className="flex gap-4">
                     <Link
-                        to={`/admin/users/${user.id}/edit`}
+                        to={`/admin/users/${u.id}/edit`}
                         className={BUTTON.default}
                     >
                         Редактировать
@@ -131,4 +129,32 @@ export default function AdminUserDetailPage(): React.ReactElement {
             </section>
         </AdminLayout>
     );
+}
+
+/* ================= helpers ================= */
+
+function Info({
+                  label,
+                  children,
+              }: {
+    label: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div>
+            <p className={TEXT.accent_2}>{label}</p>
+            <p className={TEXT.default}>{children}</p>
+        </div>
+    );
+}
+
+function RoleBadge({ role }: { role: string }) {
+    const className =
+        role === "admin"
+            ? "text-red-600 font-medium"
+            : role === "driver"
+                ? "text-blue-600"
+                : "text-gray-700";
+
+    return <span className={className}>{role}</span>;
 }

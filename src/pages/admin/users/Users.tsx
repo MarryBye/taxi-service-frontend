@@ -7,10 +7,11 @@ import { TEXT } from "@/styles/Text";
 import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
-import { useUsers } from "@/hooks/admin/useUsers";
+import { useUsersList } from "@/hooks/useAdmin";
+import type { UsersView } from "@/types/views";
 
 export default function AdminUsersListPage(): React.ReactElement {
-    const { data, loading, error } = useUsers();
+    const { data, loading, error } = useUsersList();
 
     if (loading) {
         return (
@@ -32,7 +33,8 @@ export default function AdminUsersListPage(): React.ReactElement {
 
     return (
         <AdminLayout>
-            <section className="flex flex-col gap-8">
+            <section className="max-w-7xl mx-auto px-8 py-16 flex flex-col gap-8">
+                {/* HEADER */}
                 <div className="flex flex-col md:flex-row justify-between gap-6">
                     <div>
                         <h1 className={`${TEXT.title} text-3xl mb-2`}>
@@ -48,6 +50,7 @@ export default function AdminUsersListPage(): React.ReactElement {
                     </Link>
                 </div>
 
+                {/* TABLE */}
                 <div className="border border-gray-200 rounded bg-white overflow-x-auto">
                     {!data || data.length === 0 ? (
                         <p className={`${TEXT.accent_1} px-6 py-6`}>
@@ -57,80 +60,49 @@ export default function AdminUsersListPage(): React.ReactElement {
                         <table className="w-full border-collapse">
                             <thead className="bg-gray-50">
                             <tr>
-                                <th className="text-left px-4 py-3 border-b">
-                                    ID
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Имя
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Email
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Телефон
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Роль
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Город
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Дата создания
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Действия
-                                </th>
+                                <Th>ID</Th>
+                                <Th>Имя</Th>
+                                <Th>Email</Th>
+                                <Th>Телефон</Th>
+                                <Th>Роль</Th>
+                                <Th>Город</Th>
+                                <Th>Создан</Th>
+                                <Th>Действия</Th>
                             </tr>
                             </thead>
 
                             <tbody>
-                            {data.map((user: any) => (
+                            {data.map((user: UsersView) => (
                                 <tr
                                     key={user.id}
                                     className="hover:bg-gray-50"
                                 >
-                                    <td className="px-4 py-3 border-b">
-                                        {user.id}
-                                    </td>
+                                    <Td>{user.id}</Td>
 
-                                    <td className="px-4 py-3 border-b">
+                                    <Td>
                                         {user.first_name} {user.last_name}
-                                    </td>
+                                    </Td>
 
-                                    <td className="px-4 py-3 border-b">
-                                        {user.email}
-                                    </td>
+                                    <Td>{user.email}</Td>
 
-                                    <td className="px-4 py-3 border-b">
-                                        {user.tel_number}
-                                    </td>
+                                    <Td>{user.tel_number}</Td>
 
-                                    <td className="px-4 py-3 border-b">
-                                            <span
-                                                className={
-                                                    user.role === "admin"
-                                                        ? "text-red-600 font-medium"
-                                                        : user.role === "driver"
-                                                            ? "text-blue-600"
-                                                            : "text-gray-700"
-                                                }
-                                            >
-                                                {user.role}
-                                            </span>
-                                    </td>
+                                    <Td>
+                                        <UserRoleBadge role={user.role} />
+                                    </Td>
 
-                                    <td className="px-4 py-3 border-b">
-                                        {user.city}, {user.country}
-                                    </td>
+                                    <Td>
+                                        {user.city.country.full_name},{" "}
+                                        {user.city.name}
+                                    </Td>
 
-                                    <td className="px-4 py-3 border-b">
+                                    <Td>
                                         {new Date(
                                             user.created_at
                                         ).toLocaleDateString()}
-                                    </td>
+                                    </Td>
 
-                                    <td className="px-4 py-3 border-b">
+                                    <Td>
                                         <div className="flex gap-3">
                                             <Link
                                                 to={`/admin/users/${user.id}`}
@@ -146,7 +118,7 @@ export default function AdminUsersListPage(): React.ReactElement {
                                                 Редактировать
                                             </Link>
                                         </div>
-                                    </td>
+                                    </Td>
                                 </tr>
                             ))}
                             </tbody>
@@ -155,5 +127,34 @@ export default function AdminUsersListPage(): React.ReactElement {
                 </div>
             </section>
         </AdminLayout>
+    );
+}
+
+/* ================= helpers ================= */
+
+function UserRoleBadge({ role }: { role: string }) {
+    const className =
+        role === "admin"
+            ? "text-red-600 font-medium"
+            : role === "driver"
+                ? "text-blue-600"
+                : "text-gray-700";
+
+    return <span className={className}>{role}</span>;
+}
+
+function Th({ children }: { children: React.ReactNode }) {
+    return (
+        <th className="text-left px-4 py-3 border-b">
+            {children}
+        </th>
+    );
+}
+
+function Td({ children }: { children: React.ReactNode }) {
+    return (
+        <td className="px-4 py-3 border-b">
+            {children}
+        </td>
     );
 }

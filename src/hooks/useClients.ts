@@ -1,33 +1,87 @@
+import { useEffect } from "react";
 import { useApiQuery } from "@/utils/useApiQuery";
 import { useApiMutation } from "@/utils/useApiMutation";
-import * as api from "@/api/clients";
+import { useAuthStore } from "@/store/auth.store";
 
-import type { MakeOrder, CancelOrder, RateOrder, UpdateProfile } from "@/types/clients";
+import * as authorizedApi from "@/api/authorized";
+import * as authorizedTypes from "@/types/authorized";
+
+import * as views from "@/types/views";
 
 export function useProfile() {
-    return useApiQuery(api.getProfile, []);
+    const setUser = useAuthStore((s) => s.setUser);
+
+    const query = useApiQuery<views.UsersView>(
+        authorizedApi.get_profile,
+        []
+    );
+
+    useEffect(() => {
+        if (!query.data) return;
+
+        setUser(query.data);
+    }, [query.data, setUser]);
+
+    return query;
 }
 
-export function useMakeOrder() {
-    return useApiMutation<MakeOrder, any>(api.makeOrder);
+export function useUpdateProfile() {
+    return useApiMutation<
+        authorizedTypes.UpdateProfile,
+        views.UsersView
+    >(authorizedApi.update_profile);
 }
 
-export function useClientUpdateProfile() {
-    return useApiMutation<UpdateProfile, any>(api.updateProfile);
-}
-
-export function useCancelOrder() {
-    return useApiMutation<CancelOrder, any>(api.cancelOrder);
-}
-
-export function useRateOrder() {
-    return useApiMutation<RateOrder, any>(api.rateOrder);
-}
-
-export function useHistory() {
-    return useApiQuery(api.getHistory, []);
+export function useOrdersHistory() {
+    return useApiQuery<views.OrdersView[]>(
+        () => authorizedApi.orders_history(),
+        []
+    );
 }
 
 export function useCurrentOrder() {
-    return useApiQuery(api.currentOrder, []);
+    return useApiQuery<views.OrdersView>(
+        () => authorizedApi.current_order(),
+        []
+    );
+}
+
+export function useOrderInfo(orderId: number | null) {
+    return useApiQuery<views.OrdersStatView>(
+        () => {
+            if (!orderId) {
+                return Promise.reject("orderId is null");
+            }
+            return authorizedApi.order_info(orderId);
+        },
+        [orderId]
+    );
+}
+
+export function useMakeOrder() {
+    return useApiMutation<
+        authorizedTypes.MakeOrderSchema,
+        views.OrdersView
+    >(authorizedApi.make_order);
+}
+
+export function useCancelOrder(orderId: number) {
+    return useApiMutation<
+        authorizedTypes.CancelOrderSchema,
+        views.OrdersStatView
+    >((data) => authorizedApi.cancel_order(orderId, data));
+}
+
+export function useRateOrder(orderId: number) {
+    return useApiMutation<
+        authorizedTypes.RateOrderSchema,
+        views.OrdersStatView
+    >((data) => authorizedApi.rate_order(orderId, data));
+}
+
+export function useClientStats() {
+    return useApiQuery<views.ClientsStatView>(
+        () => authorizedApi.stats(),
+        []
+    );
 }

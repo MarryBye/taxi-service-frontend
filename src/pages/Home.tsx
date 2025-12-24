@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Link } from "react-router-dom";
 
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
@@ -7,7 +8,7 @@ import { TEXT } from "@/styles/Text";
 import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
-export default function HomePage(): React.ReactElement {
+export default function HomePage(): React.ReactElement | null {
     return (
         <DefaultLayout>
             <section className="max-w-7xl mx-auto px-8 py-20">

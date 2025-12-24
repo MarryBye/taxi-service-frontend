@@ -4,22 +4,22 @@ import { Link, useNavigate } from "react-router-dom";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 
 import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
-import { useCreateTransaction } from "@/hooks/admin/useTransactions";
-import type { CreateTransaction } from "@/types/transactions";
+import { useCreateTransaction } from "@/hooks/useAdmin";
+import type { CreateTransactionSchema } from "@/types/admin";
 
 export default function AdminTransactionCreatePage(): React.ReactElement {
     const navigate = useNavigate();
-    const { mutate: createTransaction, loading, error } = useCreateTransaction();
+    const { mutate: createTransaction, loading, error } =
+        useCreateTransaction();
 
-    const [form, setForm] = useState<CreateTransaction>({
+    const [form, setForm] = useState<CreateTransactionSchema>({
         user_id: 0,
-        amount: 0,
-        transaction_type: "debit",
         balance_type: "payment",
+        transaction_type: "debit",
         payment_method: "cash",
+        amount: 0,
     });
 
     function handleChange(
@@ -27,25 +27,26 @@ export default function AdminTransactionCreatePage(): React.ReactElement {
     ) {
         const { name, value } = e.target;
 
-        setForm({
-            ...form,
+        setForm((prev) => ({
+            ...prev,
             [name]:
-                name === "amount" || name === "user_id"
+                name === "user_id" || name === "amount"
                     ? Number(value)
                     : value,
-        });
+        }));
     }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+
         await createTransaction(form);
         navigate("/admin/transactions");
     }
 
     return (
         <AdminLayout>
-            <section className="max-w-xl flex flex-col gap-8">
-                {/* ===== HEADER ===== */}
+            <section className="max-w-xl mx-auto px-8 py-16 flex flex-col gap-8">
+                {/* HEADER */}
                 <div>
                     <h1 className={`${TEXT.title} text-3xl mb-2`}>
                         Создание транзакции
@@ -55,7 +56,7 @@ export default function AdminTransactionCreatePage(): React.ReactElement {
                     </p>
                 </div>
 
-                {/* ===== FORM ===== */}
+                {/* FORM */}
                 <form
                     onSubmit={handleSubmit}
                     className="flex flex-col gap-5 bg-white border border-gray-200 rounded p-6"
@@ -67,7 +68,7 @@ export default function AdminTransactionCreatePage(): React.ReactElement {
                         value={form.user_id}
                         onChange={handleChange}
                         required
-                        className="w-full border border-gray-300 rounded px-4 py-2"
+                        className="border border-gray-300 rounded px-4 py-2"
                     />
 
                     <input
@@ -77,14 +78,14 @@ export default function AdminTransactionCreatePage(): React.ReactElement {
                         value={form.amount}
                         onChange={handleChange}
                         required
-                        className="w-full border border-gray-300 rounded px-4 py-2"
+                        className="border border-gray-300 rounded px-4 py-2"
                     />
 
                     <select
                         name="transaction_type"
                         value={form.transaction_type}
                         onChange={handleChange}
-                        className="w-full border border-gray-300 rounded px-4 py-2"
+                        className="border border-gray-300 rounded px-4 py-2"
                     >
                         <option value="debit">Списание</option>
                         <option value="credit">Начисление</option>
@@ -96,7 +97,7 @@ export default function AdminTransactionCreatePage(): React.ReactElement {
                         name="balance_type"
                         value={form.balance_type}
                         onChange={handleChange}
-                        className="w-full border border-gray-300 rounded px-4 py-2"
+                        className="border border-gray-300 rounded px-4 py-2"
                     >
                         <option value="payment">Платёжный</option>
                         <option value="earning">Заработок</option>
@@ -106,7 +107,7 @@ export default function AdminTransactionCreatePage(): React.ReactElement {
                         name="payment_method"
                         value={form.payment_method}
                         onChange={handleChange}
-                        className="w-full border border-gray-300 rounded px-4 py-2"
+                        className="border border-gray-300 rounded px-4 py-2"
                     >
                         <option value="cash">Наличные</option>
                         <option value="credit_card">Карта</option>

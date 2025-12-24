@@ -1,20 +1,20 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
 
 import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
-import { useOrder, useDeleteOrder } from "@/hooks/admin/useOrders";
+import { useAdminOrderInfo } from "@/hooks/useAdmin";
+import type { OrdersView } from "@/types/views";
 
 export default function AdminOrderDetailPage(): React.ReactElement {
+    const navigate = useNavigate();
     const { orderId } = useParams<{ orderId: string }>();
     const id = orderId ? Number(orderId) : null;
 
-    const { data: order, loading, error } = useOrder(id);
-    const { mutate: deleteOrder } = useDeleteOrder();
+    const { data: order, loading, error } = useAdminOrderInfo(id);
 
     if (loading) {
         return (
@@ -34,14 +34,16 @@ export default function AdminOrderDetailPage(): React.ReactElement {
         );
     }
 
+    const o: OrdersView = order;
+
     return (
         <AdminLayout>
-            <section className="flex flex-col gap-10 max-w-3xl">
+            <section className="max-w-3xl mx-auto px-8 py-16 flex flex-col gap-10">
                 {/* HEADER */}
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className={`${TEXT.title} text-3xl mb-1`}>
-                            Заказ #{order.id}
+                            Заказ #{o.id}
                         </h1>
                         <p className={TEXT.accent_1}>
                             Детальная информация о заказе
@@ -49,86 +51,76 @@ export default function AdminOrderDetailPage(): React.ReactElement {
                     </div>
 
                     <Link to="/admin/orders" className={BUTTON.transparent}>
-                        ← Назад
+                        ← К списку
                     </Link>
                 </div>
 
                 {/* INFO */}
-                <div className="border border-gray-200 rounded p-6 bg-white flex flex-col gap-4">
-                    <div>
-                        <p className={TEXT.accent_2}>Статус</p>
-                        <p className={TEXT.default}>{order.status}</p>
-                    </div>
+                <div className="border border-gray-200 rounded p-6 bg-white flex flex-col gap-5">
+                    <Info label="Статус">
+                        {o.status}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Класс автомобиля</p>
-                        <p className={TEXT.default}>{order.order_class}</p>
-                    </div>
+                    <Info label="Класс автомобиля">
+                        {o.order_class}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Клиент</p>
-                        <p className={TEXT.default}>{order.client_id}</p>
-                    </div>
+                    <Info label="Клиент">
+                        {o.client.first_name} {o.client.last_name}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Водитель</p>
-                        <p className={TEXT.default}>
-                            {order.driver_id ?? "Не назначен"}
-                        </p>
-                    </div>
+                    <Info label="Водитель">
+                        {o.driver
+                            ? `${o.driver.first_name} ${o.driver.last_name}`
+                            : "Не назначен"}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Транзакция</p>
-                        <p className={TEXT.default}>
-                            {order.transaction_id ?? "—"}
-                        </p>
-                    </div>
+                    <Info label="Сумма">
+                        {o.transaction.amount}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Маршрут</p>
-                        <p className={TEXT.default}>
-                            {order.route_id ?? "—"}
-                        </p>
-                    </div>
+                    <Info label="Маршрут">
+                        Дистанция: {o.route.distance} км
+                    </Info>
 
-                    <div className="flex gap-6">
-                        <div>
-                            <p className={TEXT.accent_2}>Создан</p>
-                            <p className={TEXT.default}>
-                                {new Date(order.created_at).toLocaleString()}
-                            </p>
-                        </div>
+                    <div className="flex gap-8">
+                        <Info label="Создан">
+                            {new Date(o.created_at).toLocaleString()}
+                        </Info>
 
-                        <div>
-                            <p className={TEXT.accent_2}>Обновлён</p>
-                            <p className={TEXT.default}>
-                                {new Date(order.changed_at).toLocaleString()}
-                            </p>
-                        </div>
+                        <Info label="Обновлён">
+                            {new Date(o.changed_at).toLocaleString()}
+                        </Info>
                     </div>
                 </div>
 
                 {/* ACTIONS */}
                 <div className="flex gap-4">
                     <Link
-                        to={`/admin/orders/${order.id}/edit`}
-                        className={BUTTON.transparent}
+                        to={`/admin/orders/${o.id}/edit`}
+                        className={BUTTON.default}
                     >
                         Редактировать
                     </Link>
-
-                    <button
-                        className={BUTTON.warning}
-                        onClick={() => {
-                            if (confirm("Удалить заказ?")) {
-                                deleteOrder(order.id);
-                            }
-                        }}
-                    >
-                        Удалить
-                    </button>
                 </div>
             </section>
         </AdminLayout>
+    );
+}
+
+/* ================= helpers ================= */
+
+function Info({
+                  label,
+                  children,
+              }: {
+    label: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div>
+            <p className={TEXT.accent_2}>{label}</p>
+            <p className={TEXT.default}>{children}</p>
+        </div>
     );
 }

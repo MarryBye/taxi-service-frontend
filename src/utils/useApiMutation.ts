@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-export function useApiMutation<TPayload, TResult = void>(
-    request: (payload: TPayload) => Promise<{ data: TResult }>
+export function useApiMutation<TPayload, TResult>(
+    request: (payload: TPayload) => Promise<TResult>
 ) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>(null);
@@ -9,10 +9,8 @@ export function useApiMutation<TPayload, TResult = void>(
     const mutate = async (payload: TPayload): Promise<TResult | null> => {
         setLoading(true);
         setError(null);
-
         try {
-            const res = await request(payload);
-            return res.data;
+            return await request(payload);
         } catch (err) {
             setError(err);
             return null;

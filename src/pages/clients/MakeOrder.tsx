@@ -6,89 +6,55 @@ import { DefaultLayout } from "@/components/layout/DefaultLayout";
 import { TEXT } from "@/styles/Text";
 import { BUTTON } from "@/styles/Button";
 
-import type {
-    CarClass,
-    PaymentMethod,
-} from "@/types/db";
-
+import type { CarClasses, PaymentMethods } from "@/types/enums/db";
 import type { Address } from "@/types/common";
-import type { CreateOrder } from "@/types/orders";
 
-import { useMakeOrder } from "@/hooks/useClients";
+import { useMakeOrder, useProfile } from "@/hooks/useClients";
+import {data} from "autoprefixer";
 
 export default function MakeOrderPage(): React.ReactElement {
     const navigate = useNavigate();
-    const { mutate, loading, error } = useMakeOrder();
-    const [form, setForm] = useState<CreateOrder>({
-        order_class: "standard",
-        payment_method: "cash",
-        amount: 0,
-        addresses: [
-            {
-                country_name: "Ukraine",
-                city_name: "Kyiv",
-                street_name: "",
-                house_number: "",
-                latitude: 0,
-                longitude: 0,
-            },
-            {
-                country_name: "Ukraine",
-                city_name: "Kyiv",
-                street_name: "",
-                house_number: "",
-                latitude: 0,
-                longitude: 0,
-            },
-        ],
-    });
+    const { mutate: makeOrder, loading, error } = useMakeOrder();
+    const { data: profile, loading: profileLoading, error: profileError } = useProfile();
 
-    function updateAddress(
+    const [orderClass, setOrderClass] = useState<CarClasses>("standard");
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethods>("cash");
+    const [addresses, setAddresses] = useState<Address[]>([]);
+
+    if (profileLoading || profileError) return <div>Loading...</div>;
+    if (!profile) return <div>No profile</div>;
+
+    const updateAddress = (
         index: number,
         field: keyof Address,
-        value: string | number
-    ) {
-        const updated = [...form.addresses];
+        value: string
+    ) => {
+        const next = [...addresses];
         // @ts-ignore
-        updated[index] = {
-            ...updated[index],
-            [field]: value,
-        };
+        next[index] = { ...next[index], [field]: value };
+        setAddresses(next);
+    };
 
-        setForm({
-            ...form,
-            addresses: updated,
-        });
-    }
+    const addAddress = () => {
+        setAddresses([...addresses, emptyAddress(profile.city.country.full_name, profile.city.name)]);
+    };
 
-    function addAddress() {
-        setForm({
-            ...form,
-            addresses: [
-                ...form.addresses,
-                {
-                    country_name: "Ukraine",
-                    city_name: "Kyiv",
-                    street_name: "",
-                    house_number: "",
-                    latitude: 0,
-                    longitude: 0,
-                },
-            ],
-        });
-    }
-
-    function removeAddress(index: number) {
-        setForm({
-            ...form,
-            addresses: form.addresses.filter((_, i) => i !== index),
-        });
-    }
+    const removeAddress = (index: number) => {
+        setAddresses(addresses.filter((_, i) => i !== index));
+    };
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        await mutate(form)
-        navigate('/orders/history')
+
+        const res = await makeOrder({
+            order_class: orderClass,
+            payment_method: paymentMethod,
+            addresses,
+        });
+
+        if (res) {
+            navigate("/orders/history");
+        }
     }
 
     return (
@@ -98,110 +64,69 @@ export default function MakeOrderPage(): React.ReactElement {
                     Создание заказа
                 </h1>
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="flex flex-col gap-6"
-                >
-                    <div>
-                        <label className={`${TEXT.default} block mb-2`}>
-                            Класс автомобиля
-                        </label>
-                        <select
-                            value={form.order_class}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    order_class: e.target.value as CarClass,
-                                })
-                            }
-                            className="w-full border border-gray-300 rounded px-4 py-2"
-                        >
-                            <option value="standard">Standard</option>
-                            <option value="comfort">Comfort</option>
-                            <option value="business">Business</option>
-                        </select>
-                    </div>
+                <h3 className="mb-4">
+                    Регион: {profile.city.country.full_name}, {profile.city.name}
+                </h3>
 
-                    <div>
-                        <label className={`${TEXT.default} block mb-2`}>
-                            Способ оплаты
-                        </label>
-                        <select
-                            value={form.payment_method}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    payment_method: e.target.value as PaymentMethod,
-                                })
-                            }
-                            className="w-full border border-gray-300 rounded px-4 py-2"
-                        >
-                            <option value="cash">Наличные</option>
-                            <option value="credit_card">Карта</option>
-                        </select>
-                    </div>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                    {/* CAR CLASS */}
+                    <Select
+                        label="Класс автомобиля"
+                        value={orderClass}
+                        onChange={setOrderClass}
+                        options={[
+                            ["standard", "Standard"],
+                            ["comfort", "Comfort"],
+                            ["business", "Business"],
+                        ]}
+                    />
 
-                    <div>
-                        <label className={`${TEXT.default} block mb-2`}>
-                            Сумма
-                        </label>
-                        <input
-                            type="number"
-                            min={0}
-                            value={form.amount}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    amount: Number(e.target.value),
-                                })
-                            }
-                            className="w-full border border-gray-300 rounded px-4 py-2"
-                        />
-                    </div>
+                    {/* PAYMENT */}
+                    <Select
+                        label="Способ оплаты"
+                        value={paymentMethod}
+                        onChange={setPaymentMethod}
+                        options={[
+                            ["cash", "Наличные"],
+                            ["credit_card", "Карта"],
+                        ]}
+                    />
 
+                    {/* ADDRESSES */}
                     <div>
-                        <label className={`${TEXT.default} block mb-4`}>
+                        <p className={`${TEXT.default} mb-4`}>
                             Адреса маршрута
-                        </label>
+                        </p>
 
                         <div className="flex flex-col gap-4">
-                            {form.addresses.map((address, index) => (
+                            {addresses.map((a, i) => (
                                 <div
-                                    key={index}
-                                    className="border border-gray-200 rounded p-4 flex flex-col gap-3"
+                                    key={i}
+                                    className="border rounded p-4 flex flex-col gap-3"
                                 >
                                     <div className="flex gap-2">
                                         <input
                                             placeholder="Улица"
-                                            value={address.street_name}
+                                            value={a.street}
                                             onChange={(e) =>
-                                                updateAddress(
-                                                    index,
-                                                    "street_name",
-                                                    e.target.value
-                                                )
+                                                updateAddress(i, "street", e.target.value)
                                             }
-                                            className="w-2/3 border border-gray-300 rounded px-4 py-2"
+                                            className="w-2/3 border rounded px-4 py-2"
                                         />
-
                                         <input
                                             placeholder="Дом"
-                                            value={address.house_number}
+                                            value={a.house}
                                             onChange={(e) =>
-                                                updateAddress(
-                                                    index,
-                                                    "house_number",
-                                                    e.target.value
-                                                )
+                                                updateAddress(i, "house", e.target.value)
                                             }
-                                            className="w-1/3 border border-gray-300 rounded px-4 py-2"
+                                            className="w-1/3 border rounded px-4 py-2"
                                         />
                                     </div>
 
-                                    {form.addresses.length > 2 && (
+                                    {addresses.length > 2 && (
                                         <button
                                             type="button"
-                                            onClick={() => removeAddress(index)}
+                                            onClick={() => removeAddress(i)}
                                             className={BUTTON.transparent}
                                         >
                                             Удалить адрес
@@ -220,13 +145,65 @@ export default function MakeOrderPage(): React.ReactElement {
                         </button>
                     </div>
 
-                    { error ? <p className={TEXT.accent_1}>{error.message}</p> : null }
+                    {error && (
+                        <p className={TEXT.accent_1}>
+                            {error.message}
+                        </p>
+                    )}
 
-                    <button type="submit" className={BUTTON.default}>
-                        Оформить заказ
+                    <button
+                        type="submit"
+                        className={BUTTON.default}
+                        disabled={loading}
+                    >
+                        {loading ? "Создание..." : "Оформить заказ"}
                     </button>
                 </form>
             </section>
         </DefaultLayout>
+    );
+}
+
+/* =========================
+   HELPERS
+========================= */
+
+function emptyAddress(country: string, city: string): Address {
+    return {
+        country: country,
+        city: city,
+        street: "",
+        house: "",
+    };
+}
+
+function Select<T extends string>({
+                                      label,
+                                      value,
+                                      onChange,
+                                      options,
+                                  }: {
+    label: string;
+    value: T;
+    onChange: (v: T) => void;
+    options: [T, string][];
+}) {
+    return (
+        <div>
+            <label className={`${TEXT.default} block mb-2`}>
+                {label}
+            </label>
+            <select
+                value={value}
+                onChange={(e) => onChange(e.target.value as T)}
+                className="w-full border rounded px-4 py-2"
+            >
+                {options.map(([v, l]) => (
+                    <option key={v} value={v}>
+                        {l}
+                    </option>
+                ))}
+            </select>
+        </div>
     );
 }

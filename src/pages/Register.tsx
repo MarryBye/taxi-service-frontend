@@ -8,36 +8,61 @@ import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
 import { useAuth } from "@/hooks/useAuth";
-import type { RegisterUserSchema } from "@/types/auth";
+import { useCountriesList, useCitiesList } from "@/hooks/usePublic";
+
+import type { RegisterSchema } from "@/types/auth";
 
 export default function RegisterPage(): React.ReactElement {
     const navigate = useNavigate();
-    const { register } = useAuth();
+    const { register, registerLoading, registerError } = useAuth();
 
-    const [form, setForm] = useState<RegisterUserSchema>({
+    const { data: countries } = useCountriesList();
+
+    const [selectedCountryId, setSelectedCountryId] = useState<number | null>(null);
+
+    const { data: cities } = useCitiesList(
+        selectedCountryId ?? 0
+    );
+
+    const [form, setForm] = useState<RegisterSchema>({
         login: "",
-        email: "",
-        tel_number: "",
         password: "",
         first_name: "",
         last_name: "",
-        country: "Ukraine",
-        city: "Kyiv",
+        email: "",
+        tel_number: "",
+        city_id: 0,
     });
 
     function handleChange(
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) {
+        const { name, value } = e.target;
+
+        if (name === "country") {
+            setSelectedCountryId(Number(value));
+            setForm({ ...form, city_id: 0 });
+            return;
+        }
+
+        if (name === "city_id") {
+            setForm({ ...form, city_id: Number(value) });
+            return;
+        }
+
         setForm({
             ...form,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
     }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        await register(form);
-        navigate("/login");
+
+        const res = await register(form);
+        if (res) {
+            navigate("/login");
+        }
     }
 
     return (
@@ -101,22 +126,33 @@ export default function RegisterPage(): React.ReactElement {
                     <div className="flex gap-2">
                         <select
                             name="country"
-                            value={form.country}
+                            value={selectedCountryId ?? ""}
                             onChange={handleChange}
+                            required
                             className="w-1/2 border border-gray-300 rounded px-4 py-2"
                         >
-                            <option value="Ukraine">Ukraine</option>
+                            <option value="">Страна</option>
+                            {countries?.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                    {c.full_name}
+                                </option>
+                            ))}
                         </select>
 
                         <select
-                            name="city"
-                            value={form.city}
+                            name="city_id"
+                            value={form.city_id || ""}
                             onChange={handleChange}
+                            required
+                            disabled={!cities}
                             className="w-1/2 border border-gray-300 rounded px-4 py-2"
                         >
-                            <option value="Kyiv">Kyiv</option>
-                            <option value="Odessa">Odessa</option>
-                            <option value="Lviv">Lviv</option>
+                            <option value="">Город</option>
+                            {cities?.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                    {c.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
@@ -130,11 +166,20 @@ export default function RegisterPage(): React.ReactElement {
                         className="w-full border border-gray-300 rounded px-4 py-2"
                     />
 
+                    {registerError && (
+                        <p className="text-red-600 text-sm">
+                            Ошибка регистрации. Проверьте данные.
+                        </p>
+                    )}
+
                     <button
                         type="submit"
                         className={BUTTON.default}
+                        disabled={registerLoading}
                     >
-                        Зарегистрироваться
+                        {registerLoading
+                            ? "Регистрация..."
+                            : "Зарегистрироваться"}
                     </button>
                 </form>
 

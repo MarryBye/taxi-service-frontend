@@ -1,10 +1,20 @@
 import api from '@/utils/api';
-import type { AuthUserSchema, RegisterUserSchema } from "@/types/auth";
 
-export async function login(payload: AuthUserSchema) {
-    return api.post('/login', payload);
+import * as auth_schemas from '@/types/auth';
+import * as views_schemas from '@/types/views';
+
+export const login = async (
+    data: auth_schemas.LoginSchema
+): Promise<auth_schemas.TokenSchema> => {
+    return api.post('/auth/login', data);
 }
 
-export async function register(payload: RegisterUserSchema) {
-    return api.post('/register', payload);
+export const register = async (
+    data: auth_schemas.RegisterSchema
+): Promise<views_schemas.UsersView> => {
+    return api.post('/auth/register', data);
+}
+
+export const logout = async () => {
+    return api.post('/auth/logout');
 }

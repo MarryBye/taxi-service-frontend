@@ -6,36 +6,61 @@ import { DefaultLayout } from "@/components/layout/DefaultLayout";
 import { TEXT } from "@/styles/Text";
 import { BUTTON } from "@/styles/Button";
 
-import { useClientUpdateProfile } from "@/hooks/useClients";
-import type { UpdateProfile } from "@/types/clients";
+import { useUpdateProfile } from "@/hooks/useClients";
+import { useCountriesList, useCitiesList } from "@/hooks/usePublic";
 
-export default function UpdateProfile(): React.ReactElement {
+import type { UpdateProfile } from "@/types/authorized";
+
+export default function UpdateProfilePage(): React.ReactElement {
     const navigate = useNavigate();
-    const { mutate, loading, error } = useClientUpdateProfile();
+    const { mutate, loading, error } = useUpdateProfile();
+
+    const { data: countries } = useCountriesList();
+
+    const [selectedCountryId, setSelectedCountryId] = useState<number | null>(null);
+
+    const { data: cities } = useCitiesList(
+        selectedCountryId ?? 0
+    );
 
     const [form, setForm] = useState<UpdateProfile>({
         email: "",
         first_name: "",
         last_name: "",
         tel_number: "",
-        country_name: "Ukraine",
-        city_name: "Odessa",
+        city_id: 0,
         password: "",
     });
 
     function handleChange(
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) {
+        const { name, value } = e.target;
+
+        if (name === "country") {
+            setSelectedCountryId(Number(value));
+            setForm({ ...form, city_id: 0 });
+            return;
+        }
+
+        if (name === "city_id") {
+            setForm({ ...form, city_id: Number(value) });
+            return;
+        }
+
         setForm({
             ...form,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
     }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        await mutate(form);
-        navigate("/profile");
+        const res = await mutate(form);
+
+        if (res) {
+            navigate("/profile");
+        }
     }
 
     return (
@@ -44,6 +69,12 @@ export default function UpdateProfile(): React.ReactElement {
                 <h1 className={`${TEXT.title} text-3xl mb-6`}>
                     Редактирование профиля
                 </h1>
+
+                {error && (
+                    <p className="text-red-500 mb-4">
+                        Не удалось обновить профиль
+                    </p>
+                )}
 
                 <form
                     onSubmit={handleSubmit}
@@ -84,23 +115,32 @@ export default function UpdateProfile(): React.ReactElement {
 
                     <div className="flex gap-2">
                         <select
-                            name="country_name"
-                            value={form.country_name}
+                            name="country"
+                            value={selectedCountryId ?? ""}
                             onChange={handleChange}
                             className="w-1/2 border border-gray-300 rounded px-4 py-2"
                         >
-                            <option value="Ukraine">Ukraine</option>
+                            <option value="">Страна</option>
+                            {countries?.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                    {c.full_name}
+                                </option>
+                            ))}
                         </select>
 
                         <select
-                            name="city_name"
-                            value={form.city_name}
+                            name="city_id"
+                            value={form.city_id || ""}
                             onChange={handleChange}
+                            disabled={!cities}
                             className="w-1/2 border border-gray-300 rounded px-4 py-2"
                         >
-                            <option value="Kyiv">Kyiv</option>
-                            <option value="Odessa">Odessa</option>
-                            <option value="Lviv">Lviv</option>
+                            <option value="">Город</option>
+                            {cities?.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                    {c.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
 

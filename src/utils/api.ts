@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-    (res) => res,
+    (res) => res.data,
     (err) => {
         console.error('API error:', err);
         return Promise.reject(err);

@@ -1,24 +1,17 @@
-import React from 'react';
-import { useProfile } from "@/hooks/useClients";
-
-type RoleRequireProps = React.PropsWithChildren<{
-   needRoles: string[];
-   invert?: boolean;
-}>;
+import { useAuthStore } from "@/store/auth.store";
+import type { UserRoles } from "@/types/enums/db";
 
 export function RequireRole(
-    {children, needRoles, invert = false}: RoleRequireProps
-): React.ReactElement | null {
-    const {data, loading, error} = useProfile();
+    { children, needRoles, invert }: React.PropsWithChildren<
+        { needRoles: UserRoles[], invert?: boolean }
+    >
+) {
+    const user = useAuthStore((s) => s.user);
+    const role = user?.role ? user.role : 'guest';
 
-    const userRole = data !== null && !error ? data.role : 'guest';
-    const isAllowed = invert ? !needRoles.includes(userRole) : needRoles.includes(userRole);
-
-    if (!isAllowed) return null;
-
-    return (
-        <div>
-            {children}
-        </div>
-    )
+    if (invert) {
+        return !needRoles.includes(role) ? <>{children}</> : null;
+    } else {
+        return needRoles.includes(role) ? <>{children}</> : null;
+    }
 }

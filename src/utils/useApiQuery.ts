@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 export function useApiQuery<T>(
-    request: () => Promise<{ data: T }>,
+    request: () => Promise<T>,
     deps: any[] = []
 ) {
     const [data, setData] = useState<T | null>(null);
@@ -13,8 +13,7 @@ export function useApiQuery<T>(
         setError(null);
 
         try {
-            const res = await request();
-            setData(res.data);
+            setData(await request());
         } catch (err) {
             setError(err);
         } finally {

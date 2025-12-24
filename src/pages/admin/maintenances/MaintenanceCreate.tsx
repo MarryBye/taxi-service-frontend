@@ -6,46 +6,59 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { TEXT } from "@/styles/Text";
 import { BUTTON } from "@/styles/Button";
 
-import { useCreateMaintenance } from "@/hooks/admin/useMaintenances";
-import type { CreateMaintenance } from "@/types/maintenances";
+import { useMai } from "@/hooks/useAdmin";
+import type { CreateMaintenanceSchema } from "@/types/admin";
+import type { MaintenanceStatuses } from "@/types/enums/db";
 
 export default function AdminMaintenanceCreatePage(): React.ReactElement {
     const navigate = useNavigate();
-    const { mutate: createMaintenance, loading, error } = useCreateMaintenance();
+    const { mutate: createMaintenance, loading, error } =
+        useCreateMaintenance();
 
-    const [form, setForm] = useState<CreateMaintenance>({
+    const [form, setForm] = useState<CreateMaintenanceSchema>({
         car_id: 0,
         description: "",
         cost: 0,
         status: "diagnosis",
+        maintenance_start: "",
+        maintenance_end: "",
     });
 
     function handleChange(
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+        e: React.ChangeEvent<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >
     ) {
         const { name, value } = e.target;
 
-        setForm({
-            ...form,
+        setForm((prev) => ({
+            ...prev,
             [name]:
                 name === "cost" || name === "car_id"
                     ? Number(value)
                     : value,
-        });
+        }));
     }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+
         await createMaintenance(form);
         navigate("/admin/maintenances");
     }
 
     return (
         <AdminLayout>
-            <section className="max-w-xl flex flex-col gap-6">
-                <h1 className={`${TEXT.title} text-3xl`}>
-                    Добавить обслуживание
-                </h1>
+            <section className="max-w-xl mx-auto px-8 py-16 flex flex-col gap-8">
+                {/* HEADER */}
+                <div>
+                    <h1 className={`${TEXT.title} text-3xl`}>
+                        Добавить обслуживание
+                    </h1>
+                    <p className={TEXT.accent_1}>
+                        Регистрация технического обслуживания автомобиля
+                    </p>
+                </div>
 
                 {error && (
                     <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
@@ -53,9 +66,10 @@ export default function AdminMaintenanceCreatePage(): React.ReactElement {
                     </div>
                 )}
 
+                {/* FORM */}
                 <form
                     onSubmit={handleSubmit}
-                    className="flex flex-col gap-5"
+                    className="flex flex-col gap-5 bg-white border border-gray-200 rounded p-6"
                 >
                     <input
                         type="number"
@@ -96,6 +110,24 @@ export default function AdminMaintenanceCreatePage(): React.ReactElement {
                         <option value="in_progress">В процессе</option>
                         <option value="completed">Завершено</option>
                     </select>
+
+                    <input
+                        type="datetime-local"
+                        name="maintenance_start"
+                        value={form.maintenance_start}
+                        onChange={handleChange}
+                        required
+                        className="border border-gray-300 rounded px-4 py-2"
+                    />
+
+                    <input
+                        type="datetime-local"
+                        name="maintenance_end"
+                        value={form.maintenance_end}
+                        onChange={handleChange}
+                        required
+                        className="border border-gray-300 rounded px-4 py-2"
+                    />
 
                     <div className="flex gap-4 pt-4">
                         <button

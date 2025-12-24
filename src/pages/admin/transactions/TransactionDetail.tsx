@@ -4,16 +4,20 @@ import { Link, useParams } from "react-router-dom";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 
 import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
-import { useTransaction } from "@/hooks/admin/useTransactions";
+import { useTransactionInfo } from "@/hooks/useAdmin";
+import type { TransactionsView } from "@/types/views";
 
 export default function AdminTransactionDetailPage(): React.ReactElement {
     const { transactionId } = useParams<{ transactionId: string }>();
     const id = transactionId ? Number(transactionId) : null;
 
-    const { data: transaction, loading, error } = useTransaction(id);
+    const {
+        data: transaction,
+        loading,
+        error,
+    } = useTransactionInfo(id);
 
     if (loading) {
         return (
@@ -33,14 +37,16 @@ export default function AdminTransactionDetailPage(): React.ReactElement {
         );
     }
 
+    const tx: TransactionsView = transaction;
+
     return (
         <AdminLayout>
-            <section className="max-w-3xl flex flex-col gap-8">
-                {/* ===== HEADER ===== */}
+            <section className="max-w-3xl mx-auto px-8 py-16 flex flex-col gap-8">
+                {/* HEADER */}
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className={`${TEXT.title} text-2xl mb-1`}>
-                            Транзакция #{transaction.id}
+                            Транзакция #{tx.id}
                         </h1>
                         <p className={TEXT.accent_1}>
                             Детальная информация
@@ -51,55 +57,60 @@ export default function AdminTransactionDetailPage(): React.ReactElement {
                         to="/admin/transactions"
                         className={BUTTON.transparent}
                     >
-                        ← Назад
+                        ← К списку
                     </Link>
                 </div>
 
-                {/* ===== MAIN INFO ===== */}
+                {/* INFO */}
                 <div className="border border-gray-200 rounded bg-white p-6 flex flex-col gap-4">
-                    <div>
-                        <p className={TEXT.accent_2}>Пользователь</p>
-                        <p className={TEXT.default}>
-                            ID: {transaction.user_id}
-                        </p>
-                    </div>
+                    <Info label="Тип баланса">
+                        {tx.balance_type}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Сумма</p>
-                        <p className={TEXT.default}>
-                            {transaction.amount} грн
-                        </p>
-                    </div>
+                    <Info label="Тип операции">
+                        {tx.transaction_type}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Тип транзакции</p>
-                        <p className={TEXT.default}>
-                            {transaction.transaction_type}
-                        </p>
-                    </div>
+                    <Info label="Метод оплаты">
+                        {tx.payment_method}
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Тип баланса</p>
-                        <p className={TEXT.default}>
-                            {transaction.balance_type}
-                        </p>
-                    </div>
+                    <Info label="Сумма">
+                        <span
+                            className={
+                                tx.transaction_type === "credit"
+                                    ? "text-green-600 font-medium"
+                                    : tx.transaction_type === "debit"
+                                        ? "text-red-600 font-medium"
+                                        : ""
+                            }
+                        >
+                            {tx.amount} грн
+                        </span>
+                    </Info>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Метод оплаты</p>
-                        <p className={TEXT.default}>
-                            {transaction.payment_method}
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className={TEXT.accent_2}>Дата создания</p>
-                        <p className={TEXT.default}>
-                            {new Date(transaction.created_at).toLocaleString()}
-                        </p>
-                    </div>
+                    <Info label="Дата создания">
+                        {new Date(tx.created_at).toLocaleString()}
+                    </Info>
                 </div>
             </section>
         </AdminLayout>
+    );
+}
+
+/* ================= helpers ================= */
+
+function Info({
+                  label,
+                  children,
+              }: {
+    label: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div>
+            <p className={TEXT.accent_2}>{label}</p>
+            <p className={TEXT.default}>{children}</p>
+        </div>
     );
 }

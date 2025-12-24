@@ -8,15 +8,21 @@ import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
 import { useAuth } from "@/hooks/useAuth";
-import type {AuthUserSchema} from "@/types/auth";
+import type { LoginSchema } from "@/types/auth";
 
 export default function LoginPage(): React.ReactElement {
     const navigate = useNavigate();
-    const [form, setForm] = useState<AuthUserSchema>({
+
+    const {
+        login,
+        loginLoading,
+        loginError,
+    } = useAuth();
+
+    const [form, setForm] = useState<LoginSchema>({
         login: "",
         password: "",
     });
-    const { login } = useAuth();
 
     function handleChange(
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -29,8 +35,11 @@ export default function LoginPage(): React.ReactElement {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        await login(form)
-        navigate("/");
+
+        const res = await login(form);
+        if (res) {
+            navigate("/");
+        }
     }
 
     return (
@@ -44,30 +53,36 @@ export default function LoginPage(): React.ReactElement {
                     onSubmit={handleSubmit}
                     className="flex flex-col gap-6"
                 >
-                    <div>
-                        <input
-                            type="text"
-                            placeholder='Логин'
-                            name='login'
-                            value={form.login}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-gray-400"
-                        />
-                    </div>
+                    <input
+                        type="text"
+                        name="login"
+                        placeholder="Логин"
+                        value={form.login}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded px-4 py-2"
+                    />
 
-                    <div>
-                        <input
-                            type="password"
-                            placeholder='Пароль'
-                            name='password'
-                            value={form.password}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-gray-400"
-                        />
-                    </div>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Пароль"
+                        value={form.password}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded px-4 py-2"
+                    />
 
-                    <button type="submit" className={BUTTON.default}>
-                        Войти
+                    {loginError && (
+                        <p className="text-red-600 text-sm">
+                            Ошибка входа. Проверьте логин и пароль.
+                        </p>
+                    )}
+
+                    <button
+                        type="submit"
+                        className={BUTTON.default}
+                        disabled={loginLoading}
+                    >
+                        {loginLoading ? "Вход..." : "Войти"}
                     </button>
                 </form>
 
