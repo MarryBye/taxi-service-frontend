@@ -65,7 +65,7 @@ export default function DriverOrdersHistoryPage(): React.ReactElement {
                             </p>
                         </div>
 
-                        <Link to="/worker" className={BUTTON.transparent}>
+                        <Link to="/driver" className={BUTTON.transparent}>
                             ← Назад в панель
                         </Link>
                     </div>

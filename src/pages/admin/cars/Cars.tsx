@@ -7,10 +7,10 @@ import { TEXT } from "@/styles/Text";
 import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
-import { useCars } from "@/hooks/admin/useCars";
+import { useCarsList } from "@/hooks/useAdmin";
 
 export default function AdminCarsListPage(): React.ReactElement {
-    const { data, loading, error } = useCars();
+    const { data, loading, error } = useCarsList();
 
     if (loading) {
         return (
@@ -137,7 +137,7 @@ export default function AdminCarsListPage(): React.ReactElement {
                                     </td>
 
                                     <td className="px-4 py-3 border-b">
-                                        {car.city}, {car.country}
+                                        {car.city.name}, {car.city.country.full_name}
                                     </td>
 
                                     <td className="px-4 py-3 border-b">

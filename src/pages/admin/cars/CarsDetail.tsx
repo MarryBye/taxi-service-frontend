@@ -7,15 +7,15 @@ import { TEXT } from "@/styles/Text";
 import { LINK } from "@/styles/Link";
 import { BUTTON } from "@/styles/Button";
 
-import { useCar, useDeleteCar } from "@/hooks/admin/useCars";
+import { useCarInfo, useDeleteCar } from "@/hooks/useAdmin";
 
 export default function AdminCarDetailPage(): React.ReactElement {
     const navigate = useNavigate();
     const { carId } = useParams<{ carId: string }>();
     const id = carId ? Number(carId) : null;
 
-    const { data: car, loading, error } = useCar(id);
-    const { mutate: deleteCar } = useDeleteCar();
+    const { data: car, loading, error } = useCarInfo(id);
+    const { mutate: deleteCar } = useDeleteCar(id);
 
     if (loading) {
         return (
@@ -66,7 +66,7 @@ export default function AdminCarDetailPage(): React.ReactElement {
 
                     <div>
                         <p className={TEXT.accent_2}>Гос. номер</p>
-                        <p className={TEXT.default}>{car.car_number}</p>
+                        <p className={TEXT.default}>{car.number_plate}</p>
                     </div>
 
                     <div>
@@ -108,15 +108,25 @@ export default function AdminCarDetailPage(): React.ReactElement {
 
                     <div>
                         <p className={TEXT.accent_2}>Водитель</p>
-                        <p className={TEXT.default}>
-                            {car.driver_id ?? "Не назначен"}
-                        </p>
+                        {
+                            car.driver ? (
+                                <Link
+                                    className={LINK.default}
+                                    to={`/admin/users/${car.driver.id}`}
+                                >
+                                    {car.driver.first_name} {car.driver.last_name}
+                                </Link>
+                            ) : (
+                                "Не призначено"
+                            )
+                        }
+
                     </div>
 
                     <div>
                         <p className={TEXT.accent_2}>Локация</p>
                         <p className={TEXT.default}>
-                            {car.city}, {car.country}
+                            {car.city.name}, {car.city.country.full_name}
                         </p>
                     </div>
 

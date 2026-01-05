@@ -67,7 +67,7 @@ export function Header(): React.ReactElement {
                     </RequireRole>
 
                     <RequireRole needRoles={["driver"]}>
-                        <Link to="/worker" className={BUTTON.transparent}>
+                        <Link to="/driver" className={BUTTON.transparent}>
                             Панель водителя
                         </Link>
                     </RequireRole>

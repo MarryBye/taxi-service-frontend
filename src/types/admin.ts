@@ -5,6 +5,7 @@ export type CreateCarSchema = {
     mark: string;
     model: string;
     number_plate: string;
+    country_id: number;
     city_id: number;
     color: enums.Colors;
     car_class: enums.CarClasses;
@@ -16,6 +17,7 @@ export type UpdateCarSchema = {
     mark: string | null;
     model: string | null;
     number_plate: string | null;
+    country_id: number;
     city_id: number | null;
     color: enums.Colors | null;
     car_class: enums.CarClasses | null;
@@ -51,6 +53,7 @@ export type CreateUserSchema = {
     last_name: string;
     email: string;
     tel_number: string;
+    country_id: number;
     city_id: number;
     role: enums.UserRoles;
 }
@@ -60,6 +63,7 @@ export type UpdateUserSchema = {
     last_name: string | null;
     email: string | null;
     tel_number: string | null;
+    country_id: number;
     city_id: number | null;
     password: string | null;
     role: enums.UserRoles | null;

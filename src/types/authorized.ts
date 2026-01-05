@@ -23,6 +23,7 @@ export type UpdateProfile = {
     last_name: string;
     email: string;
     tel_number: string;
+    country_id: number;
     city_id: number;
     password: string;
 }

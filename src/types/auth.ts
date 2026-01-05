@@ -13,6 +13,7 @@ export type RegisterSchema = {
     last_name: string;
     email: string;
     tel_number: string;
+    country_id: number;
     city_id: number;
 }
 
