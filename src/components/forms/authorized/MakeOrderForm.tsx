@@ -1,6 +1,7 @@
 import React from "react";
 import type { MakeOrderSchema } from "@/types/authorized";
-import { FormStyles } from "@/styles/Form";
+
+import { styleSheet } from "@/styles/Form";
 import { useAuthStore } from "@/store/auth.store";
 
 type Props = {
@@ -8,9 +9,11 @@ type Props = {
 };
 
 export default function MakeOrderForm({
-    submitHandler,
-}: Props): React.ReactElement {
+                                          submitHandler,
+                                      }: Props): React.ReactElement {
+
     const user = useAuthStore((s) => s.user);
+
     const [form, setForm] = React.useState<MakeOrderSchema>({
         order_class: "standard",
         payment_method: "credit_card",
@@ -32,11 +35,9 @@ export default function MakeOrderForm({
 
     if (!user) {
         return (
-            <div className={FormStyles.LOADER}></div>
-        )
+            <div className={styleSheet.otherStyles.LOADER} />
+        );
     }
-
-    /* -------------------- handlers -------------------- */
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -48,7 +49,7 @@ export default function MakeOrderForm({
     ) {
         const { name, value } = e.target;
 
-        setForm((prev) => ({
+        setForm(prev => ({
             ...prev,
             [name]: value,
         }));
@@ -59,7 +60,7 @@ export default function MakeOrderForm({
         field: "street" | "house",
         value: string
     ) {
-        setForm((prev) => ({
+        setForm(prev => ({
             ...prev,
             addresses: prev.addresses.map((addr, i) =>
                 i === index ? { ...addr, [field]: value } : addr
@@ -68,7 +69,7 @@ export default function MakeOrderForm({
     }
 
     function addAddress() {
-        setForm((prev) => ({
+        setForm(prev => ({
             ...prev,
             addresses: [
                 ...prev.addresses,
@@ -83,32 +84,33 @@ export default function MakeOrderForm({
     }
 
     function removeAddress(index: number) {
-        setForm((prev) => ({
+        setForm(prev => ({
             ...prev,
             addresses: prev.addresses.filter((_, i) => i !== index),
         }));
     }
 
-    /* -------------------- UI -------------------- */
-
     return (
-        <div className={FormStyles.CARD}>
-            <h1 className={FormStyles.H2}>Зробити замовлення</h1>
+        <div className={styleSheet.containerStyles.CARD}>
+            <h1 className={styleSheet.textStyles.H2}>
+                Зробити замовлення
+            </h1>
 
             <form
                 onSubmit={handleSubmit}
-                className={FormStyles.SMALL_CONTAINER}
+                className={styleSheet.containerStyles.SMALL_CONTAINER}
             >
-                {/* Order class */}
-                <div className={FormStyles.SMALL_CONTAINER}>
-                    <label className={FormStyles.DEFAULT}>
+
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Бажаний клас автомобіля:
                     </label>
+
                     <select
                         name="order_class"
                         value={form.order_class}
                         onChange={handleRootChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.SELECT}
                     >
                         <option value="standard">Standard</option>
                         <option value="comfort">Comfort</option>
@@ -116,35 +118,34 @@ export default function MakeOrderForm({
                     </select>
                 </div>
 
-                {/* Payment method */}
-                <div className={FormStyles.SMALL_CONTAINER}>
-                    <label className={FormStyles.DEFAULT}>
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Метод оплати:
                     </label>
+
                     <select
                         name="payment_method"
                         value={form.payment_method}
                         onChange={handleRootChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.SELECT}
                     >
                         <option value="credit_card">Картка</option>
                         <option value="cash">Готівка</option>
                     </select>
                 </div>
 
-                {/* Addresses */}
-                <div className={FormStyles.SMALL_CONTAINER}>
-                    <label className={FormStyles.DEFAULT}>
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Список адрес:
                     </label>
 
-                    <div className="flex flex-col gap-4">
+                    <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
                         {form.addresses.map((address, index) => (
                             <div
                                 key={index}
-                                className="rounded-lg border border-gray-200 p-3 flex flex-col gap-2"
+                                className={styleSheet.emphasisStyles.BOX}
                             >
-                                <div className="text-sm text-gray-600">
+                                <div className={styleSheet.textStyles.SMALL}>
                                     {address.country}, {address.city}
                                 </div>
 
@@ -159,7 +160,7 @@ export default function MakeOrderForm({
                                             e.target.value
                                         )
                                     }
-                                    className={FormStyles.INPUT}
+                                    className={styleSheet.inputStyles.INPUT}
                                 />
 
                                 <input
@@ -173,16 +174,14 @@ export default function MakeOrderForm({
                                             e.target.value
                                         )
                                     }
-                                    className={FormStyles.INPUT}
+                                    className={styleSheet.inputStyles.INPUT}
                                 />
 
                                 {form.addresses.length > 1 && (
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            removeAddress(index)
-                                        }
-                                        className={FormStyles.BUTTON_SECONDARY}
+                                        onClick={() => removeAddress(index)}
+                                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
                                     >
                                         Видалити адресу
                                     </button>
@@ -193,17 +192,16 @@ export default function MakeOrderForm({
                         <button
                             type="button"
                             onClick={addAddress}
-                            className={FormStyles.BUTTON_SECONDARY}
+                            className={styleSheet.inputStyles.BUTTON_SECONDARY}
                         >
                             + Додати адресу
                         </button>
                     </div>
                 </div>
 
-                {/* Submit */}
                 <button
                     type="submit"
-                    className={FormStyles.BUTTON_PRIMARY}
+                    className={styleSheet.inputStyles.BUTTON_PRIMARY}
                 >
                     Зробити замовлення
                 </button>

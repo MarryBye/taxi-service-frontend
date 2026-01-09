@@ -1,25 +1,22 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
-
-import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
-
 import { AdminNav } from "@/components/ui/AdminNav";
+
+import { styleSheet } from "@/styles/Form";
 
 export function AdminLayout({
                                 children,
                             }: React.PropsWithChildren): React.ReactElement {
     return (
-        <div className="flex min-h-screen flex-col bg-white">
+        <div className={styleSheet.layoutStyles.PAGE}>
             <Header />
 
             <main className="flex flex-1">
                 <aside className="w-64 border-r border-gray-200 bg-white px-6 py-8">
-                    <h2 className={`${TEXT.title} text-lg mb-6`}>
-                        Админ панель
+                    <h2 className={`${styleSheet.textStyles.H3} mb-6`}>
+                        Адмін-панель
                     </h2>
 
                     <AdminNav />

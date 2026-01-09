@@ -1,14 +1,12 @@
 import React from "react";
-import type {CreateTransactionSchema} from "@/types/admin";
-import {FormStyles} from "@/styles/Form";
-import {useCountriesList} from "@/hooks/usePublic";
-import {useCitiesList} from "@/hooks/usePublic";
-import {useUsersList} from "@/hooks/useAdmin";
+import type { CreateTransactionSchema } from "@/types/admin";
 
+import { styleSheet } from "@/styles/Form";
+import { useUsersList } from "@/hooks/useAdmin";
 
 export default function CreateTransactionForm({
-    submitHandler
-}: {
+                                                  submitHandler
+                                              }: {
     submitHandler: (form: CreateTransactionSchema) => void;
 }): React.ReactElement {
 
@@ -20,14 +18,12 @@ export default function CreateTransactionForm({
         amount: 100
     });
 
-    const {data: users, loading: users_loading, error: users_error} = useUsersList();
+    const { data: users, loading: users_loading } = useUsersList();
 
     if (users_loading) {
         return (
-            <div
-                className={FormStyles.LOADER}>
-            </div>
-        )
+            <div className={styleSheet.otherStyles.LOADER} />
+        );
     }
 
     function handleSubmit(e: React.FormEvent) {
@@ -42,142 +38,110 @@ export default function CreateTransactionForm({
             ...prev,
             [name]: value,
         }));
-
-        console.log("Form changed!")
-        console.table(form);
     }
 
     return (
-        <div
-            className={FormStyles.CARD}
-        >
-            <h1
-                className={FormStyles.H2}
-            >
+        <div className={styleSheet.containerStyles.CARD}>
+            <h1 className={styleSheet.textStyles.H2}>
                 Створення транзакції
             </h1>
 
             <form
                 onSubmit={handleSubmit}
-                className={FormStyles.SMALL_CONTAINER}
+                className={styleSheet.containerStyles.SMALL_CONTAINER}
             >
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <label
-                        htmlFor='user_id'
-                        className={FormStyles.DEFAULT}
-                    >
+
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Користувач:
                     </label>
+
                     <select
-                        id='user_id'
-                        name='user_id'
+                        name="user_id"
                         value={form.user_id}
                         onChange={handleChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.SELECT}
                     >
-                        {
-                            users?.map((user) => (
-                                <option key={user.id} value={user.id}>{user.first_name} {user.last_name} ({user.id})</option>
-                            ))
-                        }
+                        {users?.map(user => (
+                            <option key={user.id} value={user.id}>
+                                {user.first_name} {user.last_name} ({user.id})
+                            </option>
+                        ))}
                     </select>
                 </div>
 
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <label
-                        htmlFor='balance_type'
-                        className={FormStyles.DEFAULT}
-                    >
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Тип балансу:
                     </label>
+
                     <select
-                        id='balance_type'
-                        name='balance_type'
+                        name="balance_type"
                         value={form.balance_type}
                         onChange={handleChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.SELECT}
                     >
-                        <option value='payment'>Для оплат</option>
-                        <option value='earning'>Для виводу</option>
+                        <option value="payment">Для оплат</option>
+                        <option value="earning">Для виводу</option>
                     </select>
                 </div>
 
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <label
-                        htmlFor='transaction_type'
-                        className={FormStyles.DEFAULT}
-                    >
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Тип транзакції:
                     </label>
+
                     <select
-                        id='transaction_type'
-                        name='transaction_type'
+                        name="transaction_type"
                         value={form.transaction_type}
                         onChange={handleChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.SELECT}
                     >
-                        <option value='debit'>Поповнення</option>
-                        <option value='credit'>Витрата</option>
-                        <option value='refund'>Повернення коштів</option>
-                        <option value='penalty'>Штраф</option>
+                        <option value="debit">Поповнення</option>
+                        <option value="credit">Витрата</option>
+                        <option value="refund">Повернення коштів</option>
+                        <option value="penalty">Штраф</option>
                     </select>
                 </div>
 
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <label
-                        htmlFor='payment_method'
-                        className={FormStyles.DEFAULT}
-                    >
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Спосіб отримання:
                     </label>
+
                     <select
-                        id='payment_method'
-                        name='payment_method'
+                        name="payment_method"
                         value={form.payment_method}
                         onChange={handleChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.SELECT}
                     >
-                        <option value='credit_card'>Банківська картка</option>
-                        <option value='cash'>Налічні гроші</option>
+                        <option value="credit_card">Банківська картка</option>
+                        <option value="cash">Готівка</option>
                     </select>
                 </div>
 
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <label
-                        htmlFor='amount'
-                        className={FormStyles.DEFAULT}
-                    >
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Сума:
                     </label>
+
                     <input
-                        type='number'
-                        id='amount'
-                        name='amount'
-                        min='0'
+                        type="number"
+                        name="amount"
+                        min="0"
                         value={form.amount}
                         onChange={handleChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.INPUT}
                     />
                 </div>
 
                 <button
-                    type='submit'
-                    className={FormStyles.BUTTON_PRIMARY}
+                    type="submit"
+                    className={styleSheet.inputStyles.BUTTON_PRIMARY}
                 >
                     Створити
                 </button>
             </form>
-
         </div>
-    )
+    );
 }

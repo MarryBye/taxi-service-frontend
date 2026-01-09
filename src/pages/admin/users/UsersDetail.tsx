@@ -2,159 +2,229 @@ import React from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
-
-import { TEXT } from "@/styles/Text";
-import { BUTTON } from "@/styles/Button";
+import { styleSheet } from "@/styles/Form";
 
 import {
     useUserInfo,
-    useDeleteUser,
+    useDeleteUser, useClientStats, useDriverStats,
 } from "@/hooks/useAdmin";
 
 import type { UsersView } from "@/types/views";
+import {FaBackward, FaPlus} from "react-icons/fa";
+import {LoaderBlock} from "@/components/ui/Loader";
 
 export default function AdminUserDetailPage(): React.ReactElement {
     const navigate = useNavigate();
     const { userId } = useParams<{ userId: string }>();
     const id = userId ? Number(userId) : null;
 
-    const {
-        data: user,
-        loading,
-        error,
-    } = useUserInfo(id);
+    const { data: user, loading: userLoading, error: userError } = useUserInfo(id);
+    const { data: clientInfo, loading: clientInfoLoading, error: clientInfoError } = useClientStats(id);
+    const { data: driverInfo, loading: driverInfoLoading, error: driverInfoError } = useDriverStats(id);
 
-    const {
-        mutate: deleteUser,
-        loading: deleteLoading,
-    } = useDeleteUser(id!);
-
-    if (loading) {
+    if (userLoading || clientInfoLoading || driverInfoLoading) {
         return (
             <AdminLayout>
-                <p className={TEXT.accent_1}>Загрузка пользователя…</p>
+                <LoaderBlock />
             </AdminLayout>
         );
     }
 
-    if (error || !user) {
+    if (userError) {
         return (
             <AdminLayout>
-                <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
-                    Пользователь не найден
+                <div className={styleSheet.emphasisStyles.BOX_DANGER}>
+                    Помилка завантаження користувача
                 </div>
             </AdminLayout>
         );
     }
 
-    async function handleDelete() {
-        if (!confirm("Удалить пользователя?")) return;
-
-        await deleteUser();
-        navigate("/admin/users");
-    }
-
-    const u: UsersView = user;
-
     return (
         <AdminLayout>
-            <section className="max-w-3xl mx-auto px-8 py-16 flex flex-col gap-8">
-                {/* HEADER */}
-                <div className="flex justify-between items-start">
+            <section
+                className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
+            >
+                <div
+                    className="flex flex-col md:flex-row justify-between gap-6"
+                >
                     <div>
-                        <h1 className={`${TEXT.title} text-3xl mb-2`}>
-                            Пользователь #{u.id}
+                        <h1
+                            className={`${styleSheet.textStyles.H1} mb-2`}
+                        >
+                            Користувачі
                         </h1>
-                        <p className={TEXT.accent_1}>
-                            Детальная информация
+
+                        <p className={styleSheet.textStyles.SMALL}>
+                            Інформація про користувача
                         </p>
                     </div>
 
                     <Link
                         to="/admin/users"
-                        className={BUTTON.transparent}
+                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
                     >
-                        ← К списку
+                        <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                            <FaBackward/> Повернутись
+                        </div>
                     </Link>
                 </div>
 
-                {/* INFO */}
-                <div className="border border-gray-200 rounded bg-white p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Info label="Имя">
-                        {u.first_name} {u.last_name}
-                    </Info>
+                <div className={styleSheet.containerStyles.CARD}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Повне імʼя</p>
+                            <p className={styleSheet.textStyles.BOLD}>
+                                {user!.first_name} {user!.last_name}
+                            </p>
+                        </div>
 
-                    <Info label="Роль">
-                        <RoleBadge role={u.role} />
-                    </Info>
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Роль</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {user!.role}
+                            </p>
+                        </div>
 
-                    <Info label="Email">
-                        {u.email}
-                    </Info>
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Електронна пошта</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {user!.email}
+                            </p>
+                        </div>
 
-                    <Info label="Телефон">
-                        {u.tel_number}
-                    </Info>
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Номер телефону</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {user!.tel_number}
+                            </p>
+                        </div>
 
-                    <Info label="Локация">
-                        {u.city.country.full_name}, {u.city.name}
-                    </Info>
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Місцезнаходження</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {user!.city.country.full_name}, {user!.city.name}
+                            </p>
+                        </div>
 
-                    <Info label="Создан">
-                        {new Date(u.created_at).toLocaleString()}
-                    </Info>
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Дата створення</p>
+                            <p className={styleSheet.textStyles.SMALL}>
+                                {new Date(user!.created_at).toLocaleString()}
+                            </p>
+                        </div>
 
-                    <Info label="Обновлён">
-                        {new Date(u.changed_at).toLocaleString()}
-                    </Info>
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Останнє оновлення</p>
+                            <p className={styleSheet.textStyles.SMALL}>
+                                {new Date(user!.changed_at).toLocaleString()}
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr className={styleSheet.otherStyles.DIVIDER} />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Платіжний баланс</p>
+                            <p className={styleSheet.textStyles.EMPHASIS}>
+                                {user!.payment_balance} грн
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Заробіток</p>
+                            <p className={styleSheet.textStyles.EMPHASIS}>
+                                {user!.earning_balance} грн
+                            </p>
+                        </div>
+                    </div>
+
+                    {clientInfo && (
+                        <>
+                            <hr className={styleSheet.otherStyles.DIVIDER} />
+
+                            <div>
+                                <h3 className={styleSheet.textStyles.H3}>
+                                    Статистика клієнта
+                                </h3>
+
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                                    <Stat label="Поїздок всього" value={clientInfo.rides_count} />
+                                    <Stat label="Завершено" value={clientInfo.finished_rides_count} />
+                                    <Stat label="Скасовано" value={clientInfo.canceled_rides_count} />
+                                    <Stat
+                                        label="Рейтинг"
+                                        value={clientInfo.client_rating ?? "—"}
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {driverInfo && (
+                        <>
+                            <hr className={styleSheet.otherStyles.DIVIDER} />
+
+                            <div>
+                                <h3 className={styleSheet.textStyles.H3}>
+                                    Статистика водія
+                                </h3>
+
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                                    <Stat label="Поїздок всього" value={driverInfo.rides_count} />
+                                    <Stat label="Завершено" value={driverInfo.finished_rides_count} />
+                                    <Stat label="Скасовано" value={driverInfo.canceled_rides_count} />
+                                    <Stat
+                                        label="Рейтинг"
+                                        value={driverInfo.driver_rating ?? "—"}
+                                    />
+                                </div>
+
+                                <div className="mt-4">
+                                    <p className={styleSheet.textStyles.SUBTLE}>Автомобіль</p>
+                                    <p className={styleSheet.textStyles.DEFAULT}>
+                                        {driverInfo.car
+                                            ? `${driverInfo.car.mark} ${driverInfo.car.model}`
+                                            : "Не призначено"}
+                                    </p>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
 
-                {/* ACTIONS */}
-                <div className="flex gap-4">
+                <div className={styleSheet.containerStyles.ROW}>
                     <Link
-                        to={`/admin/users/${u.id}/edit`}
-                        className={BUTTON.default}
+                        to={`/admin/users/${user!.id}/edit`}
+                        className={styleSheet.inputStyles.BUTTON_WARNING}
                     >
-                        Редактировать
+                        Редагувати
                     </Link>
 
-                    <button
-                        onClick={handleDelete}
-                        disabled={deleteLoading}
-                        className={BUTTON.warning}
+                    <Link
+                        to={`/admin/users/${user!.id}/delete`}
+                        className={styleSheet.inputStyles.BUTTON_DANGER}
                     >
-                        Удалить
-                    </button>
+                        Видалити
+                    </Link>
                 </div>
             </section>
         </AdminLayout>
     );
 }
 
-/* ================= helpers ================= */
-
-function Info({
-                  label,
-                  children,
-              }: {
+function Stat({
+    label,
+    value,
+}: {
     label: string;
-    children: React.ReactNode;
+    value: number | string;
 }) {
     return (
-        <div>
-            <p className={TEXT.accent_2}>{label}</p>
-            <p className={TEXT.default}>{children}</p>
+        <div className={styleSheet.emphasisStyles.BOX}>
+            <p className={styleSheet.textStyles.SUBTLE}>{label}</p>
+            <p className={styleSheet.textStyles.STRONG}>{value}</p>
         </div>
     );
-}
-
-function RoleBadge({ role }: { role: string }) {
-    const className =
-        role === "admin"
-            ? "text-red-600 font-medium"
-            : role === "driver"
-                ? "text-blue-600"
-                : "text-gray-700";
-
-    return <span className={className}>{role}</span>;
 }

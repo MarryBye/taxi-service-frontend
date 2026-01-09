@@ -2,53 +2,23 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { DriverLayout } from "@/components/layout/DriverLayout";
-
-import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
-import { BUTTON } from "@/styles/Button";
+import { styleSheet } from "@/styles/Form";
 
 import { useProfile } from "@/hooks/useClients";
 import {
     useDriverStats,
     useDriverCurrentOrder,
     useAcceptableOrders,
-    useAcceptOrder,
 } from "@/hooks/useDrivers";
 
 export default function DriverHomePage(): React.ReactElement | null {
-    /* профиль пользователя (водителя) */
-    const {
-        data: profile,
-        loading: profileLoading,
-        error: profileError,
-    } = useProfile();
+    const { data: profile, loading: profileLoading } = useProfile();
+    const { data: driverStats, loading: statsLoading } = useDriverStats();
+    const { data: currentOrder } = useDriverCurrentOrder();
+    const { data: acceptableOrders, loading: acceptableLoading } =
+        useAcceptableOrders();
 
-    /* статистика водителя */
-    const {
-        data: driverStats,
-        loading: statsLoading,
-        error: statsError,
-    } = useDriverStats();
-
-    /* текущий заказ */
-    const {
-        data: currentOrder,
-        loading: currentOrderLoading,
-        error: currentOrderError,
-    } = useDriverCurrentOrder();
-
-    /* доступные заказы */
-    const {
-        data: acceptableOrders,
-        loading: acceptableLoading,
-        error: acceptableError,
-    } = useAcceptableOrders();
-
-    if (
-        profileLoading ||
-        statsLoading ||
-        acceptableLoading
-    ) {
+    if (profileLoading || statsLoading || acceptableLoading) {
         return null;
     }
 
@@ -59,44 +29,52 @@ export default function DriverHomePage(): React.ReactElement | null {
     return (
         <DriverLayout
             left={
-                <div className="flex flex-col gap-6">
+                <div className={styleSheet.layoutStyles.STACK}>
                     <div>
-                        <h2 className={`${TEXT.title} text-xl mb-2`}>
-                            Водитель
+                        <h2
+                            className={`${styleSheet.textStyles.H3} mb-2`}
+                        >
+                            Водій
                         </h2>
 
-                        <p className={TEXT.default}>
+                        <p className={styleSheet.textStyles.DEFAULT}>
                             {profile.first_name} {profile.last_name}
                         </p>
                     </div>
 
                     <div>
-                        <p className={TEXT.accent_2}>Автомобиль</p>
-                        <p className={TEXT.default}>
+                        <p className={styleSheet.textStyles.MUTED}>
+                            Автомобіль
+                        </p>
+                        <p className={styleSheet.textStyles.DEFAULT}>
                             {driverStats.car
                                 ? `${driverStats.car.mark} ${driverStats.car.model}`
-                                : "Нет"}
+                                : "Немає"}
                         </p>
                     </div>
 
                     <div>
-                        <p className={TEXT.accent_2}>Баланс</p>
-                        <p className={TEXT.default}>
+                        <p className={styleSheet.textStyles.MUTED}>
+                            Баланс
+                        </p>
+                        <p className={styleSheet.textStyles.DEFAULT}>
                             {profile.earning_balance ?? 0} грн
                         </p>
                     </div>
 
-                    <div className="flex flex-col gap-3 pt-4">
+                    <div
+                        className={`${styleSheet.containerStyles.COLUMN} pt-4`}
+                    >
                         <Link
                             to="/driver/history"
-                            className={BUTTON.transparent}
+                            className={styleSheet.inputStyles.BUTTON_SECONDARY}
                         >
-                            История поездок
+                            Історія поїздок
                         </Link>
 
                         <Link
                             to="/driver/stats"
-                            className={BUTTON.transparent}
+                            className={styleSheet.inputStyles.BUTTON_SECONDARY}
                         >
                             Статистика
                         </Link>
@@ -104,77 +82,83 @@ export default function DriverHomePage(): React.ReactElement | null {
                 </div>
             }
             right={
-                <div className="flex flex-col gap-8">
-                    {/* ТЕКУЩИЙ ЗАКАЗ */}
+                <div className={styleSheet.layoutStyles.STACK}>
+                    {/* ПОТОЧНЕ ЗАМОВЛЕННЯ */}
                     {!currentOrder ? (
-                        <div className="border border-gray-200 rounded p-6 bg-white">
-                            <h3 className={`${TEXT.subtitle} text-lg mb-3`}>
-                                Текущий заказ
+                        <div className={styleSheet.containerStyles.CARD}>
+                            <h3
+                                className={`${styleSheet.textStyles.H4} mb-3`}
+                            >
+                                Поточне замовлення
                             </h3>
 
-                            <p className={TEXT.accent_1}>
-                                Активного заказа нет
+                            <p className={styleSheet.textStyles.SUBTLE}>
+                                Активного замовлення немає
                             </p>
                         </div>
                     ) : (
-                        <div className="border border-gray-200 rounded p-6 bg-white">
-                            <h3 className={`${TEXT.subtitle} text-lg mb-3`}>
-                                Текущий заказ
+                        <div className={styleSheet.containerStyles.CARD}>
+                            <h3
+                                className={`${styleSheet.textStyles.H4} mb-3`}
+                            >
+                                Поточне замовлення
                             </h3>
 
-                            <p className={TEXT.accent_1}>
-                                Клиент: {currentOrder.client.id}
+                            <p className={styleSheet.textStyles.SMALL}>
+                                Клієнт: {currentOrder.client.id}
                             </p>
-                            <p className={TEXT.accent_1}>
+                            <p className={styleSheet.textStyles.SMALL}>
                                 Статус: {currentOrder.status}
                             </p>
-                            <p className={TEXT.accent_1}>
-                                Цена: {currentOrder.transaction.amount} грн
+                            <p className={styleSheet.textStyles.SMALL}>
+                                Ціна: {currentOrder.transaction.amount} грн
                             </p>
 
                             <Link
                                 to={`/driver/orders/${currentOrder.id}`}
-                                className={LINK.default}
+                                className={styleSheet.textStyles.LINK}
                             >
-                                Перейти в заказ
+                                Перейти до замовлення
                             </Link>
                         </div>
                     )}
 
-                    {/* ДОСТУПНЫЕ ЗАКАЗЫ */}
-                    <div className="border border-gray-200 rounded p-6 bg-white">
-                        <h3 className={`${TEXT.subtitle} text-lg mb-4`}>
-                            Доступные заказы
+                    {/* ДОСТУПНІ ЗАМОВЛЕННЯ */}
+                    <div className={styleSheet.containerStyles.CARD}>
+                        <h3
+                            className={`${styleSheet.textStyles.H4} mb-4`}
+                        >
+                            Доступні замовлення
                         </h3>
 
-                        <div className="flex flex-col gap-4">
+                        <div className={styleSheet.layoutStyles.STACK}>
                             {acceptableOrders.length === 0 && (
-                                <p className={TEXT.accent_1}>
-                                    Больше заказов нет
+                                <p className={styleSheet.textStyles.SUBTLE}>
+                                    Більше замовлень немає
                                 </p>
                             )}
 
                             {acceptableOrders.map((order) => (
                                 <div
                                     key={order.id}
-                                    className="border border-gray-300 rounded p-4 flex justify-between items-center"
+                                    className={`${styleSheet.containerStyles.CARD} flex justify-between items-center`}
                                 >
                                     <div>
-                                        <p className={TEXT.default}>
+                                        <p className={styleSheet.textStyles.DEFAULT}>
                                             Маршрут: {order.route.distance} км
                                         </p>
-                                        <p className={TEXT.accent_2}>
-                                            Класс: {order.order_class}
+                                        <p className={styleSheet.textStyles.MUTED}>
+                                            Клас: {order.order_class}
                                         </p>
-                                        <p className={TEXT.accent_2}>
-                                            Цена: {order.transaction.amount} грн
+                                        <p className={styleSheet.textStyles.MUTED}>
+                                            Ціна: {order.transaction.amount} грн
                                         </p>
 
                                         <Link
                                             to={`/driver/orders/${order.id}`}
-                                            className={LINK.default}
+                                            className={styleSheet.textStyles.LINK}
                                         >
-                                            Подробнее
+                                            Детальніше
                                         </Link>
                                     </div>
                                 </div>

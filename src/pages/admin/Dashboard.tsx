@@ -2,60 +2,60 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
-
-import { TEXT } from "@/styles/Text";
-import { BUTTON } from "@/styles/Button";
+import { styleSheet } from "@/styles/Form";
 
 export default function AdminDashboard(): React.ReactElement {
     return (
         <AdminLayout>
-            <section className="max-w-7xl mx-auto px-8 py-16 flex flex-col gap-10">
+            <section className={styleSheet.contentStyles.SECTION}>
                 {/* HEADER */}
                 <div>
-                    <h1 className={`${TEXT.title} text-3xl mb-2`}>
-                        Админ-панель
+                    <h1
+                        className={`${styleSheet.textStyles.H1} mb-2`}
+                    >
+                        Адмін-панель
                     </h1>
-                    <p className={TEXT.accent_1}>
-                        Управление системой
+
+                    <p className={styleSheet.textStyles.PARAGRAPH}>
+                        Керування системою
                     </p>
                 </div>
 
                 {/* NAVIGATION GRID */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={styleSheet.layoutStyles.GRID_3}>
                     <AdminCard
-                        title="Пользователи"
-                        description="Клиенты, водители и администраторы"
+                        title="Користувачі"
+                        description="Клієнти, водії та адміністратори"
                         to="/admin/users"
                     />
 
                     <AdminCard
-                        title="Автомобили"
-                        description="Автопарк и назначение водителей"
+                        title="Автомобілі"
+                        description="Автопарк і призначення водіїв"
                         to="/admin/cars"
                     />
 
                     <AdminCard
-                        title="Заказы"
-                        description="Все поездки и их статусы"
+                        title="Замовлення"
+                        description="Усі поїздки та їх статуси"
                         to="/admin/orders"
                     />
 
                     <AdminCard
-                        title="Обслуживание"
-                        description="Ремонт и техническое состояние авто"
+                        title="Обслуговування"
+                        description="Ремонт і технічний стан авто"
                         to="/admin/maintenances"
                     />
 
                     <AdminCard
-                        title="Транзакции"
-                        description="Платежи, начисления и штрафы"
+                        title="Транзакції"
+                        description="Платежі, нарахування та штрафи"
                         to="/admin/transactions"
                     />
 
-                    {/* задел на будущее */}
                     <AdminCard
                         title="Статистика"
-                        description="Аналитика и показатели системы"
+                        description="Аналітика та показники системи"
                         to="/admin/orders"
                     />
                 </div>
@@ -78,23 +78,21 @@ function AdminCard({
     return (
         <Link
             to={to}
-            className="
-                border border-gray-200 rounded-lg
-                p-6 bg-white
-                hover:shadow-md hover:border-gray-300
-                transition
-                flex flex-col gap-2
-            "
+            className={styleSheet.emphasisStyles.BOX}
         >
-            <h2 className={`${TEXT.subtitle} text-lg`}>
+            <h2
+                className={styleSheet.textStyles.H4}
+            >
                 {title}
             </h2>
 
-            <p className={TEXT.accent_1}>
+            <p className={styleSheet.textStyles.SMALL}>
                 {description}
             </p>
 
-            <span className={`${BUTTON.transparent} mt-4 w-fit`}>
+            <span
+                className={`${styleSheet.textStyles.LINK} mt-4 w-fit`}
+            >
                 Перейти →
             </span>
         </Link>

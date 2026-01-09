@@ -40,15 +40,18 @@ import AdminUsersListPage from "@/pages/admin/users/Users";
 import AdminUserDetailPage from "@/pages/admin/users/UsersDetail";
 import AdminUserCreatePage from "@/pages/admin/users/UserCreate";
 import AdminUserUpdatePage from "@/pages/admin/users/UserUpdate";
+import AdminUserDeletePage from "@/pages/admin/users/UsersDelete";
 
+
+
+
+
+/*
 import AdminCarsListPage from "@/pages/admin/cars/Cars";
 import AdminCarCreatePage from "@/pages/admin/cars/CarsCreate";
 import AdminCarUpdatePage from "@/pages/admin/cars/CarsUpdate";
 import AdminCarDetailPage from "@/pages/admin/cars/CarsDetail";
 
-
-
-/*
 import AdminOrdersListPage from "@/pages/admin/orders/Orders";
 import AdminMaintenancesListPage from "@/pages/admin/maintenances/Maintenances";
 import AdminTransactionsListPage from "@/pages/admin/transactions/Transactions"
@@ -61,6 +64,10 @@ import AdminMaintenanceDetailPage from "@/pages/admin/maintenances/MaintenanceDe
 import AdminOrderDetailPage from "@/pages/admin/orders/OrdersDetail";
 
 
+              <Route path='/admin/cars' element={<AdminCarsListPage />} />
+              <Route path='/admin/cars/create' element={<AdminCarCreatePage />} />
+              <Route path='/admin/cars/:carId' element={<AdminCarDetailPage />} />
+              <Route path='/admin/cars/:carId/edit' element={<AdminCarUpdatePage />} />
 
               <Route path='/admin/orders' element={<AdminOrdersListPage />} />
               <Route path='/admin/orders/:orderId' element={<AdminOrderDetailPage />} />
@@ -104,11 +111,7 @@ export function App() {
               <Route path='/admin/users/:userId' element={<AdminUserDetailPage />} />
               <Route path='/admin/users/:userId/edit' element={<AdminUserUpdatePage />} />
               <Route path='/admin/users/create' element={<AdminUserCreatePage />} />
-
-              <Route path='/admin/cars' element={<AdminCarsListPage />} />
-              <Route path='/admin/cars/create' element={<AdminCarCreatePage />} />
-              <Route path='/admin/cars/:carId' element={<AdminCarDetailPage />} />
-              <Route path='/admin/cars/:carId/edit' element={<AdminCarUpdatePage />} />
+              <Route path='/admin/users/:userId/delete' element={<AdminUserDeletePage />} />
           </Routes>
         </BrowserRouter>
     );

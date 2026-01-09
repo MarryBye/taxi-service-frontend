@@ -2,16 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { DriverLayout } from "@/components/layout/DriverLayout";
-
-import { TEXT } from "@/styles/Text";
-import { BUTTON } from "@/styles/Button";
+import { styleSheet } from "@/styles/Form";
 
 import { useDriverStats } from "@/hooks/useDrivers";
 
 import type { DriversStatView } from "@/types/views";
 import type * as enums from "@/types/enums/db";
 
-/* ===== helpers для тегов ===== */
+/* ===== helpers для тегів ===== */
 
 const DRIVER_TAGS: enums.DriverTags[] = [
     "accurate",
@@ -60,7 +58,11 @@ export default function DriverStatsPage(): React.ReactElement {
         return (
             <DriverLayout
                 left={null}
-                right={<p className={TEXT.accent_1}>Загрузка статистики…</p>}
+                right={
+                    <p className={styleSheet.textStyles.SUBTLE}>
+                        Завантаження статистики…
+                    </p>
+                }
             />
         );
     }
@@ -70,8 +72,10 @@ export default function DriverStatsPage(): React.ReactElement {
             <DriverLayout
                 left={null}
                 right={
-                    <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
-                        Не удалось загрузить статистику водителя
+                    <div
+                        className={`${styleSheet.otherStyles.BADGE_ERROR} px-4 py-3 rounded`}
+                    >
+                        Не вдалося завантажити статистику водія
                     </div>
                 }
             />
@@ -87,35 +91,48 @@ export default function DriverStatsPage(): React.ReactElement {
         <DriverLayout
             left={null}
             right={
-                <section className="max-w-7xl mx-auto px-8 py-16 flex flex-col gap-10">
+                <section
+                    className={`${styleSheet.contentStyles.SECTION} flex flex-col gap-10`}
+                >
                     {/* HEADER */}
                     <div className="flex flex-col md:flex-row justify-between gap-6">
                         <div>
-                            <h1 className={`${TEXT.title} text-3xl mb-2`}>
-                                Статистика водителя
+                            <h1
+                                className={`${styleSheet.textStyles.H1} mb-2`}
+                            >
+                                Статистика водія
                             </h1>
-                            <p className={TEXT.accent_1}>
-                                Показатели вашей работы
+
+                            <p className={styleSheet.textStyles.PARAGRAPH}>
+                                Показники вашої роботи
                             </p>
                         </div>
 
-                        <Link to="/driver" className={BUTTON.transparent}>
-                            ← Назад в панель
+                        <Link
+                            to="/driver"
+                            className={styleSheet.inputStyles.BUTTON_SECONDARY}
+                        >
+                            ← Назад до панелі
                         </Link>
                     </div>
 
                     {/* STATS */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <StatCard title="Поездок всего" value={stats.rides_count} />
+                    <div
+                        className="grid grid-cols-1 md:grid-cols-4 gap-6"
+                    >
+                        <StatCard
+                            title="Поїздок усього"
+                            value={stats.rides_count}
+                        />
                         <StatCard
                             title="Завершено"
                             value={stats.finished_rides_count}
-                            color="text-green-600"
+                            color={styleSheet.textStyles.SUCCESS}
                         />
                         <StatCard
-                            title="Отменено"
+                            title="Скасовано"
                             value={stats.canceled_rides_count}
-                            color="text-red-600"
+                            color={styleSheet.textStyles.ERROR}
                         />
                         <StatCard
                             title="Рейтинг"
@@ -123,9 +140,11 @@ export default function DriverStatsPage(): React.ReactElement {
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div
+                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                    >
                         <StatCard
-                            title="Средняя дистанция"
+                            title="Середня дистанція"
                             value={
                                 stats.average_distance
                                     ? `${stats.average_distance} км`
@@ -133,7 +152,7 @@ export default function DriverStatsPage(): React.ReactElement {
                             }
                         />
                         <StatCard
-                            title="Максимальная дистанция"
+                            title="Максимальна дистанція"
                             value={
                                 stats.max_distance
                                     ? `${stats.max_distance} км`
@@ -143,16 +162,18 @@ export default function DriverStatsPage(): React.ReactElement {
                     </div>
 
                     {/* TAGS */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div
+                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                    >
                         <TagsBlock
-                            title="Теги от клиентов"
+                            title="Теги від клієнтів"
                             tags={positiveTags}
-                            color="bg-green-100"
+                            color={styleSheet.otherStyles.BADGE_SUCCESS}
                         />
                         <TagsBlock
-                            title="Причины отмен"
+                            title="Причини скасувань"
                             tags={cancelTags}
-                            color="bg-red-100"
+                            color={styleSheet.otherStyles.BADGE_ERROR}
                         />
                     </div>
                 </section>
@@ -173,9 +194,14 @@ function StatCard({
     color?: string;
 }) {
     return (
-        <div className="border border-gray-200 rounded p-6 bg-white">
-            <p className={TEXT.accent_2}>{title}</p>
-            <p className={`text-2xl font-semibold ${color}`}>
+        <div className={styleSheet.containerStyles.CARD}>
+            <p className={styleSheet.textStyles.MUTED}>
+                {title}
+            </p>
+
+            <p
+                className={`${styleSheet.textStyles.STRONG} text-2xl ${color}`}
+            >
                 {value}
             </p>
         </div>
@@ -192,17 +218,23 @@ function TagsBlock({
     color: string;
 }) {
     return (
-        <div className="border border-gray-200 rounded p-6 bg-white">
-            <p className={`${TEXT.accent_2} mb-3`}>{title}</p>
+        <div className={styleSheet.containerStyles.CARD}>
+            <p
+                className={`${styleSheet.textStyles.MUTED} mb-3`}
+            >
+                {title}
+            </p>
 
             {tags.length === 0 ? (
-                <p className="text-gray-400">—</p>
+                <p className={styleSheet.textStyles.MUTED}>
+                    —
+                </p>
             ) : (
                 <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
                         <span
                             key={tag}
-                            className={`px-3 py-1 rounded text-sm ${color}`}
+                            className={`${styleSheet.otherStyles.BADGE} ${color}`}
                         >
                             {tag}
                         </span>

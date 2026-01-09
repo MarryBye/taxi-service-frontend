@@ -2,10 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { DriverLayout } from "@/components/layout/DriverLayout";
-
-import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
-import { BUTTON } from "@/styles/Button";
+import { styleSheet } from "@/styles/Form";
 
 import { useDriverOrdersHistory, useDriverStats } from "@/hooks/useDrivers";
 import type { OrdersView } from "@/types/views";
@@ -28,8 +25,10 @@ export default function DriverOrdersHistoryPage(): React.ReactElement {
             <DriverLayout
                 left={null}
                 right={
-                    <p className="text-center py-20 text-gray-500">
-                        Загрузка истории поездок…
+                    <p
+                        className={`${styleSheet.textStyles.MUTED} text-center py-20`}
+                    >
+                        Завантаження історії поїздок…
                     </p>
                 }
             />
@@ -41,8 +40,10 @@ export default function DriverOrdersHistoryPage(): React.ReactElement {
             <DriverLayout
                 left={null}
                 right={
-                    <div className="bg-red-100 border border-red-300 text-red-700 px-6 py-4 rounded">
-                        Не удалось загрузить историю поездок
+                    <div
+                        className={`${styleSheet.otherStyles.BADGE_ERROR} px-6 py-4 rounded`}
+                    >
+                        Не вдалося завантажити історію поїздок
                     </div>
                 }
             />
@@ -53,27 +54,39 @@ export default function DriverOrdersHistoryPage(): React.ReactElement {
         <DriverLayout
             left={null}
             right={
-                <section className="max-w-7xl mx-auto px-8 py-16 flex flex-col gap-10">
+                <section
+                    className={`${styleSheet.contentStyles.SECTION} flex flex-col gap-10`}
+                >
                     {/* HEADER */}
-                    <div className="flex flex-col md:flex-row justify-between gap-6">
+                    <div
+                        className="flex flex-col md:flex-row justify-between gap-6"
+                    >
                         <div>
-                            <h1 className={`${TEXT.title} text-3xl mb-2`}>
-                                История поездок
+                            <h1
+                                className={`${styleSheet.textStyles.H1} mb-2`}
+                            >
+                                Історія поїздок
                             </h1>
-                            <p className={TEXT.accent_1}>
-                                Все завершённые и отменённые заказы
+
+                            <p className={styleSheet.textStyles.PARAGRAPH}>
+                                Усі завершені та скасовані замовлення
                             </p>
                         </div>
 
-                        <Link to="/driver" className={BUTTON.transparent}>
-                            ← Назад в панель
+                        <Link
+                            to="/driver"
+                            className={styleSheet.inputStyles.BUTTON_SECONDARY}
+                        >
+                            ← Назад до панелі
                         </Link>
                     </div>
 
                     {/* STATS */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div
+                        className={styleSheet.layoutStyles.GRID_3}
+                    >
                         <StatCard
-                            title="Всего поездок"
+                            title="Усього поїздок"
                             value={stats.rides_count}
                         />
                         <StatCard
@@ -81,44 +94,52 @@ export default function DriverOrdersHistoryPage(): React.ReactElement {
                             value={stats.finished_rides_count}
                         />
                         <StatCard
-                            title="Отменено"
+                            title="Скасовано"
                             value={stats.canceled_rides_count}
                         />
                     </div>
 
                     {/* TABLE */}
-                    <div className="border border-gray-200 rounded bg-white overflow-x-auto">
+                    <div
+                        className={`${styleSheet.containerStyles.CARD} overflow-x-auto`}
+                    >
                         <h2
-                            className={`${TEXT.subtitle} text-lg px-6 py-4 border-b`}
+                            className={`${styleSheet.textStyles.H4} px-6 py-4 border-b`}
                         >
-                            Поездки
+                            Поїздки
                         </h2>
 
                         {!history || history.length === 0 ? (
-                            <p className={`${TEXT.accent_1} px-6 py-6`}>
-                                Поездок пока нет
+                            <p
+                                className={`${styleSheet.textStyles.SUBTLE} px-6 py-6`}
+                            >
+                                Поїздок поки що немає
                             </p>
                         ) : (
-                            <table className="w-full border-collapse">
-                                <thead className="bg-gray-50">
+                            <table
+                                className={styleSheet.tableStyles.TABLE}
+                            >
+                                <thead
+                                    className={styleSheet.tableStyles.THEAD}
+                                >
                                 <tr>
-                                    <th className="px-4 py-3 border-b text-left">
+                                    <th className={styleSheet.tableStyles.TH}>
                                         ID
                                     </th>
-                                    <th className="px-4 py-3 border-b text-left">
-                                        Клиент
+                                    <th className={styleSheet.tableStyles.TH}>
+                                        Клієнт
                                     </th>
-                                    <th className="px-4 py-3 border-b text-left">
+                                    <th className={styleSheet.tableStyles.TH}>
                                         Статус
                                     </th>
-                                    <th className="px-4 py-3 border-b text-left">
-                                        Класс авто
+                                    <th className={styleSheet.tableStyles.TH}>
+                                        Клас авто
                                     </th>
-                                    <th className="px-4 py-3 border-b text-left">
+                                    <th className={styleSheet.tableStyles.TH}>
                                         Дата
                                     </th>
-                                    <th className="px-4 py-3 border-b text-left">
-                                        Действия
+                                    <th className={styleSheet.tableStyles.TH}>
+                                        Дії
                                     </th>
                                 </tr>
                                 </thead>
@@ -127,37 +148,39 @@ export default function DriverOrdersHistoryPage(): React.ReactElement {
                                 {history.map((order: OrdersView) => (
                                     <tr
                                         key={order.id}
-                                        className="hover:bg-gray-50"
+                                        className={styleSheet.tableStyles.TR}
                                     >
-                                        <td className="px-4 py-3 border-b">
+                                        <td className={styleSheet.tableStyles.TD}>
                                             {order.id}
                                         </td>
 
-                                        <td className="px-4 py-3 border-b">
+                                        <td className={styleSheet.tableStyles.TD}>
                                             {order.client.first_name}{" "}
                                             {order.client.last_name}
                                         </td>
 
-                                        <td className="px-4 py-3 border-b">
-                                            <OrderStatus status={order.status} />
+                                        <td className={styleSheet.tableStyles.TD}>
+                                            <OrderStatus
+                                                status={order.status}
+                                            />
                                         </td>
 
-                                        <td className="px-4 py-3 border-b">
+                                        <td className={styleSheet.tableStyles.TD}>
                                             {order.order_class}
                                         </td>
 
-                                        <td className="px-4 py-3 border-b">
+                                        <td className={styleSheet.tableStyles.TD}>
                                             {new Date(
                                                 order.created_at
                                             ).toLocaleString()}
                                         </td>
 
-                                        <td className="px-4 py-3 border-b">
+                                        <td className={styleSheet.tableStyles.TD}>
                                             <Link
                                                 to={`/driver/orders/${order.id}`}
-                                                className={LINK.default}
+                                                className={styleSheet.textStyles.LINK}
                                             >
-                                                Подробнее
+                                                Детальніше
                                             </Link>
                                         </td>
                                     </tr>
@@ -182,9 +205,14 @@ function StatCard({
     value: number;
 }) {
     return (
-        <div className="border border-gray-200 rounded p-6 bg-white">
-            <p className={TEXT.accent_2}>{title}</p>
-            <p className={`${TEXT.default} text-2xl font-semibold`}>
+        <div className={styleSheet.containerStyles.CARD}>
+            <p className={styleSheet.textStyles.MUTED}>
+                {title}
+            </p>
+
+            <p
+                className={`${styleSheet.textStyles.STRONG} text-2xl`}
+            >
                 {value}
             </p>
         </div>
@@ -194,10 +222,16 @@ function StatCard({
 function OrderStatus({ status }: { status: string }) {
     const color =
         status === "completed"
-            ? "text-green-600"
+            ? styleSheet.otherStyles.BADGE_SUCCESS
             : status === "canceled"
-                ? "text-red-600"
-                : "text-gray-700";
+                ? styleSheet.otherStyles.BADGE_ERROR
+                : styleSheet.textStyles.DEFAULT;
 
-    return <span className={color}>{status}</span>;
+    return (
+        <span
+            className={`${styleSheet.otherStyles.BADGE} ${color}`}
+        >
+            {status}
+        </span>
+    );
 }

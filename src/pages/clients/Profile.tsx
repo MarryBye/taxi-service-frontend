@@ -2,9 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
-
-import { TEXT } from "@/styles/Text";
-import { BUTTON } from "@/styles/Button";
+import { styleSheet } from "@/styles/Form";
 
 import { useProfile, useClientStats } from "@/hooks/useClients";
 
@@ -67,7 +65,9 @@ export default function ProfilePage(): React.ReactElement {
     if (profileLoading || statsLoading) {
         return (
             <DefaultLayout>
-                <p className={TEXT.accent_1}>Загрузка профиля…</p>
+                <p className={styleSheet.textStyles.MUTED}>
+                    Завантаження профілю…
+                </p>
             </DefaultLayout>
         );
     }
@@ -75,8 +75,8 @@ export default function ProfilePage(): React.ReactElement {
     if (profileError || statsError || !profile) {
         return (
             <DefaultLayout>
-                <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
-                    Не удалось загрузить профиль
+                <div className={styleSheet.emphasisStyles.BOX_DANGER}>
+                    Не вдалося завантажити профіль
                 </div>
             </DefaultLayout>
         );
@@ -87,98 +87,103 @@ export default function ProfilePage(): React.ReactElement {
 
     return (
         <DefaultLayout>
-            <section className="max-w-5xl mx-auto px-8 py-16 flex flex-col gap-10">
-                <h1 className={`${TEXT.title} text-3xl`}>
-                    Профиль
-                </h1>
+            <section className={styleSheet.contentStyles.SECTION}>
+                <div className={styleSheet.layoutStyles.STACK}>
+                    <h1 className={styleSheet.textStyles.H1}>
+                        Профіль
+                    </h1>
 
-                {/* PROFILE */}
-                <div className="border border-gray-200 rounded p-8 bg-white">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <ProfileField label="Имя" value={profile.first_name} />
-                        <ProfileField label="Фамилия" value={profile.last_name} />
-                        <ProfileField label="Email" value={profile.email} />
-                        <ProfileField label="Телефон" value={profile.tel_number} />
-                        <ProfileField label="Роль" value={profile.role} />
-                        <ProfileField
-                            label="Месторасположение"
-                            value={`${profile.city.country.full_name}, ${profile.city.name}`}
-                        />
+                    {/* PROFILE */}
+                    <div className={styleSheet.emphasisStyles.BOX}>
+                        <div className={`${styleSheet.layoutStyles.GRID_2} mb-8`}>
+                            <ProfileField label="Імʼя" value={profile.first_name} />
+                            <ProfileField label="Прізвище" value={profile.last_name} />
+                            <ProfileField label="Email" value={profile.email} />
+                            <ProfileField label="Телефон" value={profile.tel_number} />
+                            <ProfileField label="Роль" value={profile.role} />
+                            <ProfileField
+                                label="Місцезнаходження"
+                                value={`${profile.city.country.full_name}, ${profile.city.name}`}
+                            />
+                        </div>
+
+                        <div className="flex flex-wrap gap-4">
+                            <span className={styleSheet.inputStyles.BUTTON_SECONDARY}>
+                                Баланс: {profile.payment_balance ?? 0} грн
+                            </span>
+
+                            <Link
+                                to="/profile/edit"
+                                className={styleSheet.inputStyles.BUTTON_SECONDARY}
+                            >
+                                Редагувати профіль
+                            </Link>
+
+                            <Link
+                                to="/orders/history"
+                                className={styleSheet.inputStyles.BUTTON_SECONDARY}
+                            >
+                                Історія замовлень
+                            </Link>
+
+                            <Link
+                                to="/order"
+                                className={styleSheet.inputStyles.BUTTON_PRIMARY}
+                            >
+                                Зробити замовлення
+                            </Link>
+                        </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-4">
-                        <span className={BUTTON.transparent}>
-                            Баланс: {profile.payment_balance ?? 0} грн
-                        </span>
+                    {/* STATS */}
+                    {stats && (
+                        <>
+                            <div className={styleSheet.layoutStyles.GRID_3}>
+                                <StatCard title="Усього поїздок" value={stats.rides_count} />
+                                <StatCard
+                                    title="Завершено"
+                                    value={stats.finished_rides_count}
+                                />
+                                <StatCard
+                                    title="Скасовано"
+                                    value={stats.canceled_rides_count}
+                                />
+                            </div>
 
-                        <Link to="/profile/edit" className={BUTTON.transparent}>
-                            Редактировать профиль
-                        </Link>
+                            <div className={styleSheet.layoutStyles.GRID_2}>
+                                <StatCard
+                                    title="Середня дистанція"
+                                    value={
+                                        stats.average_distance
+                                            ? `${stats.average_distance} км`
+                                            : "—"
+                                    }
+                                />
+                                <StatCard
+                                    title="Максимальна дистанція"
+                                    value={
+                                        stats.max_distance
+                                            ? `${stats.max_distance} км`
+                                            : "—"
+                                    }
+                                />
+                            </div>
 
-                        <Link to="/orders/history" className={BUTTON.transparent}>
-                            История заказов
-                        </Link>
-
-                        <Link to="/order" className={BUTTON.default}>
-                            Сделать заказ
-                        </Link>
-                    </div>
+                            <div className={styleSheet.layoutStyles.GRID_2}>
+                                <TagsBlock
+                                    title="Теги від водіїв"
+                                    tags={positiveTags}
+                                    color="bg-green-100"
+                                />
+                                <TagsBlock
+                                    title="Причини скасувань"
+                                    tags={cancelTags}
+                                    color="bg-red-100"
+                                />
+                            </div>
+                        </>
+                    )}
                 </div>
-
-                {/* STATS */}
-                {stats && (
-                    <>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                            <StatCard title="Поездок всего" value={stats.rides_count} />
-                            <StatCard
-                                title="Завершено"
-                                value={stats.finished_rides_count}
-                                color="text-green-600"
-                            />
-                            <StatCard
-                                title="Отменено"
-                                value={stats.canceled_rides_count}
-                                color="text-red-600"
-                            />
-                            <StatCard
-                                title="Рейтинг"
-                                value={stats.client_rating ?? "—"}
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <StatCard
-                                title="Средняя дистанция"
-                                value={
-                                    stats.average_distance
-                                        ? `${stats.average_distance} км`
-                                        : "—"
-                                }
-                            />
-                            <StatCard
-                                title="Максимальная дистанция"
-                                value={
-                                    stats.max_distance
-                                        ? `${stats.max_distance} км`
-                                        : "—"
-                                }
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <TagsBlock
-                                title="Теги от водителей"
-                                tags={positiveTags}
-                                color="bg-green-100"
-                            />
-                            <TagsBlock
-                                title="Причины отмен"
-                                tags={cancelTags}
-                                color="bg-red-100"
-                            />
-                        </div>
-                    </>
-                )}
             </section>
         </DefaultLayout>
     );
@@ -189,8 +194,8 @@ export default function ProfilePage(): React.ReactElement {
 function ProfileField({ label, value }: { label: string; value: string }) {
     return (
         <div>
-            <p className={TEXT.accent_2}>{label}</p>
-            <p className={TEXT.default}>{value}</p>
+            <p className={styleSheet.textStyles.MUTED}>{label}</p>
+            <p className={styleSheet.textStyles.DEFAULT}>{value}</p>
         </div>
     );
 }
@@ -198,18 +203,14 @@ function ProfileField({ label, value }: { label: string; value: string }) {
 function StatCard({
                       title,
                       value,
-                      color = "",
                   }: {
     title: string;
     value: number | string;
-    color?: string;
 }) {
     return (
-        <div className="border border-gray-200 rounded p-6 bg-white">
-            <p className={TEXT.accent_2}>{title}</p>
-            <p className={`text-2xl font-semibold ${color}`}>
-                {value}
-            </p>
+        <div className={styleSheet.emphasisStyles.BOX}>
+            <p className={styleSheet.textStyles.MUTED}>{title}</p>
+            <p className={styleSheet.textStyles.H2}>{value}</p>
         </div>
     );
 }
@@ -224,11 +225,13 @@ function TagsBlock({
     color: string;
 }) {
     return (
-        <div className="border border-gray-200 rounded p-6 bg-white">
-            <p className={`${TEXT.accent_2} mb-3`}>{title}</p>
+        <div className={styleSheet.emphasisStyles.BOX}>
+            <p className={`${styleSheet.textStyles.MUTED} mb-3`}>
+                {title}
+            </p>
 
             {tags.length === 0 ? (
-                <p className="text-gray-400">—</p>
+                <p className={styleSheet.textStyles.SUBTLE}>—</p>
             ) : (
                 <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (

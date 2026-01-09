@@ -1,11 +1,11 @@
 import React from "react";
-import type {LoginSchema} from "@/types/auth";
-import {FormStyles} from "@/styles/Form";
+import type { LoginSchema } from "@/types/auth";
 
+import { styleSheet } from "@/styles/Form";
 
 export default function LoginForm({
-    submitHandler
-}: {
+                                      submitHandler
+                                  }: {
     submitHandler: (form: LoginSchema) => void;
 }): React.ReactElement {
 
@@ -26,73 +26,56 @@ export default function LoginForm({
             ...prev,
             [name]: value,
         }));
-
-        console.log("Form changed!")
-        console.table(form);
     }
 
     return (
-        <div
-            className={FormStyles.CARD}
-        >
-            <h1
-                className={FormStyles.H2}
-            >
+        <div className={styleSheet.containerStyles.CARD}>
+            <h1 className={styleSheet.textStyles.H2}>
                 Вхід до акаунту
             </h1>
 
             <form
                 onSubmit={handleSubmit}
-                className={FormStyles.SMALL_CONTAINER}
+                className={styleSheet.containerStyles.SMALL_CONTAINER}
             >
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <label
-                        htmlFor='login'
-                        className={FormStyles.DEFAULT}
-                    >
+
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Логін:
                     </label>
+
                     <input
-                        type='text'
-                        id='login'
-                        name='login'
+                        type="text"
+                        name="login"
                         value={form.login}
-                        placeholder='Username'
+                        placeholder="Username"
                         onChange={handleChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.INPUT}
                     />
                 </div>
 
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <label
-                        htmlFor='password'
-                        className={FormStyles.DEFAULT}
-                    >
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Пароль:
                     </label>
+
                     <input
-                        type='password'
-                        id='password'
-                        name='password'
+                        type="password"
+                        name="password"
                         value={form.password}
-                        placeholder='Password'
+                        placeholder="Password"
                         onChange={handleChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.INPUT}
                     />
                 </div>
 
                 <button
-                    type='submit'
-                    className={FormStyles.BUTTON_PRIMARY}
+                    type="submit"
+                    className={styleSheet.inputStyles.BUTTON_PRIMARY}
                 >
                     Увійти
                 </button>
             </form>
-
         </div>
-    )
+    );
 }

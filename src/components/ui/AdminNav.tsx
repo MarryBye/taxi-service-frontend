@@ -1,30 +1,55 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { TEXT } from "@/styles/Text"
-import { LINK } from "@/styles/Link";
+import { styleSheet } from "@/styles/Form";
+import { FaHome, FaUsers, FaTaxi, FaFirstOrder, FaCarCrash } from "react-icons/fa";
 
 export function AdminNav(): React.ReactElement {
     return (
-        <nav className="flex flex-col gap-3">
-            <Link to="/admin/" className={LINK.navbar}>
-                Главная
+        <nav className={`${styleSheet.containerStyles.COLUMN_SMALL_GAP} items-start`}>
+            <Link
+                to="/admin"
+                className={`${styleSheet.inputStyles.BUTTON_SECONDARY} w-full`}
+            >
+                <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                    <FaHome/>Домашня
+                </div>
             </Link>
 
-            <Link to="/admin/users" className={LINK.navbar}>
-                Пользователи
+            <Link
+                to="/admin/users"
+                className={`${styleSheet.inputStyles.BUTTON_SECONDARY} w-full`}
+            >
+                <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                    <FaUsers/>Користувачі
+                </div>
             </Link>
 
-            <Link to="/admin/cars" className={LINK.navbar}>
-                Автомобили
+            <Link
+                to="/admin/cars"
+                className={`${styleSheet.inputStyles.BUTTON_SECONDARY} w-full`}
+            >
+                <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                    <FaTaxi/>Автомобілі
+                </div>
             </Link>
 
-            <Link to="/admin/orders" className={LINK.navbar}>
-                Заказы
+            <Link
+                to="/admin/orders"
+                className={`${styleSheet.inputStyles.BUTTON_SECONDARY} w-full`}
+            >
+                <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                    <FaFirstOrder/>Замовлення
+                </div>
             </Link>
 
-            <Link to="/admin/maintenances" className={LINK.navbar}>
-                Обслуживание
+            <Link
+                to="/admin/maintenances"
+                className={`${styleSheet.inputStyles.BUTTON_SECONDARY} w-full`}
+            >
+                <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                    <FaCarCrash/>Обслуговування
+                </div>
             </Link>
         </nav>
     );

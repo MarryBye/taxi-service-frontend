@@ -1,100 +1,120 @@
 import React from "react";
-
 import { Link } from "react-router-dom";
 
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
+import { styleSheet } from "@/styles/Form";
 
-import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
-import { BUTTON } from "@/styles/Button";
-
-export default function HomePage(): React.ReactElement | null {
+export default function HomePage(): React.ReactElement {
     return (
         <DefaultLayout>
-            <section className="max-w-7xl mx-auto px-8 py-20">
-                <h1 className={`${TEXT.title} text-3xl mb-4`}>
-                    Удобный сервис заказа такси
+
+            <section className={styleSheet.contentStyles.SECTION}>
+                <h1 className={`${styleSheet.textStyles.H1} mb-4`}>
+                    Зручний сервіс замовлення таксі
                 </h1>
 
-                <p className={`${TEXT.accent_1} max-w-xl mb-8`}>
-                    Быстрые и комфортные поездки по городу. Прозрачные цены,
-                    надёжные водители и простой интерфейс для клиентов и водителей.
-                </p>
+                <div className={styleSheet.contentStyles.TEXT_BLOCK}>
+                    <p className={styleSheet.textStyles.LEAD}>
+                        Швидкі та комфортні поїздки містом з прозорими цінами
+                        та перевіреними водіями.
+                    </p>
 
-                <div className="flex items-center gap-4">
-                    <Link to="/order" className={BUTTON.default}>
-                        Сделать заказ
+                    <p className={styleSheet.textStyles.PARAGRAPH}>
+                        Taxi Service — це сучасна платформа, яка поєднує клієнтів,
+                        водіїв та адміністраторів у єдиній системі для зручних
+                        і безпечних поїздок.
+                    </p>
+                </div>
+
+                <div className="mt-8 flex gap-4">
+                    <Link
+                        to="/order"
+                        className={styleSheet.inputStyles.BUTTON_PRIMARY}
+                    >
+                        Замовити поїздку
                     </Link>
 
-                    <Link to="/about" className={LINK.default}>
-                        Узнать больше
+                    <Link
+                        to="/about"
+                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
+                    >
+                        Дізнатися більше
                     </Link>
                 </div>
             </section>
 
-            <section className="bg-gray-50 py-16">
-                <div className="max-w-7xl mx-auto px-8">
-                    <h2 className={`${TEXT.subtitle} mb-10`}>
-                        Почему выбирают нас
+            <section className={styleSheet.contentStyles.SECTION_LIGHT}>
+                <div className={styleSheet.contentStyles.SECTION}>
+                    <h2 className={`${styleSheet.textStyles.H2} mb-10`}>
+                        Чому обирають нас
                     </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                        <div className="bg-white border border-gray-200 rounded p-6">
-                            <h3 className={`${TEXT.default} font-semibold mb-2`}>
-                                Быстрая подача
+                    <div className={styleSheet.layoutStyles.GRID_3}>
+                        <div className={styleSheet.emphasisStyles.BOX}>
+                            <h3 className={`${styleSheet.textStyles.H3} mb-2`}>
+                                Швидка подача авто
                             </h3>
-                            <p className={TEXT.accent_1}>
-                                Мы подбираем ближайшего водителя, чтобы вы не тратили
-                                время на ожидание.
+                            <p className={styleSheet.textStyles.SMALL}>
+                                Ми підбираємо найближчого водія, щоб ви не витрачали
+                                час на очікування.
                             </p>
                         </div>
 
-                        <div className="bg-white border border-gray-200 rounded p-6">
-                            <h3 className={`${TEXT.default} font-semibold mb-2`}>
-                                Прозрачные цены
+                        <div className={styleSheet.emphasisStyles.BOX}>
+                            <h3 className={`${styleSheet.textStyles.H3} mb-2`}>
+                                Прозорі ціни
                             </h3>
-                            <p className={TEXT.accent_1}>
-                                Стоимость поездки известна заранее, без скрытых
-                                доплат и неприятных сюрпризов.
+                            <p className={styleSheet.textStyles.SMALL}>
+                                Вартість поїздки відома заздалегідь —
+                                без прихованих доплат та несподіванок.
                             </p>
                         </div>
 
-                        <div className="bg-white border border-gray-200 rounded p-6">
-                            <h3 className={`${TEXT.default} font-semibold mb-2`}>
-                                Надёжные водители
+                        <div className={styleSheet.emphasisStyles.BOX}>
+                            <h3 className={`${styleSheet.textStyles.H3} mb-2`}>
+                                Надійні водії
                             </h3>
-                            <p className={TEXT.accent_1}>
-                                Все водители проходят проверку и имеют рейтинг,
-                                сформированный клиентами.
+                            <p className={styleSheet.textStyles.SMALL}>
+                                Усі водії проходять перевірку та мають рейтинг,
+                                сформований клієнтами.
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section className="max-w-7xl mx-auto px-8 py-20">
-                <div className="border border-gray-200 rounded p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <section className={styleSheet.contentStyles.SECTION}>
+                <div
+                    className={`${styleSheet.emphasisStyles.BOX} flex flex-col md:flex-row gap-6 items-start md:items-center justify-between`}
+                >
                     <div>
-                        <h2 className={`${TEXT.subtitle} mb-2`}>
-                            Готовы начать поездку?
+                        <h2 className={`${styleSheet.textStyles.H2} mb-2`}>
+                            Готові розпочати поїздку?
                         </h2>
-                        <p className={TEXT.accent_1}>
-                            Зарегистрируйтесь или войдите в аккаунт и оформите заказ
-                            всего за пару кликов.
+                        <p className={styleSheet.textStyles.SMALL}>
+                            Зареєструйтесь або увійдіть в акаунт
+                            та замовте поїздку всього за кілька кліків.
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <Link to="/register" className={BUTTON.transparent}>
-                            Регистрация
+                    <div className="flex gap-4">
+                        <Link
+                            to="/register"
+                            className={styleSheet.inputStyles.BUTTON_SECONDARY}
+                        >
+                            Реєстрація
                         </Link>
 
-                        <Link to="/order" className={BUTTON.default}>
-                            Сделать заказ
+                        <Link
+                            to="/order"
+                            className={styleSheet.inputStyles.BUTTON_PRIMARY}
+                        >
+                            Замовити поїздку
                         </Link>
                     </div>
                 </div>
             </section>
+
         </DefaultLayout>
     );
 }

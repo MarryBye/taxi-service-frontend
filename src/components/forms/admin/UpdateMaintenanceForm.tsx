@@ -1,11 +1,11 @@
 import React from "react";
-import type {UpdateMaintenanceSchema} from "@/types/admin";
-import {FormStyles} from "@/styles/Form";
+import type { UpdateMaintenanceSchema } from "@/types/admin";
 
+import { styleSheet } from "@/styles/Form";
 
 export default function UpdateMaintenanceForm({
-    submitHandler
-}: {
+                                                  submitHandler
+                                              }: {
     submitHandler: (form: UpdateMaintenanceSchema) => void;
 }): React.ReactElement {
 
@@ -18,63 +18,54 @@ export default function UpdateMaintenanceForm({
         submitHandler(form);
     }
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+    function handleChange(
+        e: React.ChangeEvent<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >
+    ) {
         const { name, value } = e.target;
 
         setForm(prev => ({
             ...prev,
             [name]: value,
         }));
-
-        console.log("Form changed!")
-        console.table(form);
     }
 
     return (
-        <div
-            className={FormStyles.CARD}
-        >
-            <h1
-                className={FormStyles.H2}
-            >
+        <div className={styleSheet.containerStyles.CARD}>
+            <h1 className={styleSheet.textStyles.H2}>
                 Оновлення обслуговування
             </h1>
 
             <form
                 onSubmit={handleSubmit}
-                className={FormStyles.SMALL_CONTAINER}
+                className={styleSheet.containerStyles.SMALL_CONTAINER}
             >
 
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <label
-                        htmlFor='status'
-                        className={FormStyles.DEFAULT}
-                    >
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Статус:
                     </label>
+
                     <select
-                        id='status'
-                        name='status'
+                        name="status"
                         value={form.status}
                         onChange={handleChange}
-                        className={FormStyles.INPUT}
+                        className={styleSheet.inputStyles.SELECT}
                     >
-                        <option value='diagnosis'>Діагностика</option>
-                        <option value='in_progress'>Ремонт</option>
-                        <option value='completed'>Завершено</option>
+                        <option value="diagnosis">Діагностика</option>
+                        <option value="in_progress">Ремонт</option>
+                        <option value="completed">Завершено</option>
                     </select>
                 </div>
 
                 <button
-                    type='submit'
-                    className={FormStyles.BUTTON_PRIMARY}
+                    type="submit"
+                    className={styleSheet.inputStyles.BUTTON_PRIMARY}
                 >
                     Оновити
                 </button>
             </form>
-
         </div>
-    )
+    );
 }

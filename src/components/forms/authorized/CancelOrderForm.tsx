@@ -1,11 +1,11 @@
 import React from "react";
-import type {CancelOrderSchema} from "@/types/authorized";
-import {FormStyles} from "@/styles/Form";
+import type { CancelOrderSchema } from "@/types/authorized";
 
+import { styleSheet } from "@/styles/Form";
 
 export default function ClientCancelOrderForm({
-    submitHandler
-}: {
+                                                  submitHandler
+                                              }: {
     submitHandler: (form: CancelOrderSchema) => void;
 }): React.ReactElement {
 
@@ -44,145 +44,118 @@ export default function ClientCancelOrderForm({
     }
 
     return (
-        <div
-            className={FormStyles.CARD}
-        >
-            <h1
-                className={FormStyles.H2}
-            >
+        <div className={styleSheet.containerStyles.CARD}>
+            <h1 className={styleSheet.textStyles.H2}>
                 Скасування замовлення
             </h1>
 
             <form
                 onSubmit={handleSubmit}
-                className={FormStyles.SMALL_CONTAINER}
+                className={styleSheet.containerStyles.SMALL_CONTAINER}
             >
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <label
-                        htmlFor='comment'
-                        className={FormStyles.DEFAULT}
-                    >
+
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
                         Коментар:
                     </label>
+
                     <textarea
-                        id='comment'
-                        name='comment'
+                        name="comment"
                         value={form.comment}
-                        placeholder='Водій не приїхав на точку, хоча...'
+                        placeholder="Водій не приїхав на точку, хоча..."
                         onChange={handleCommentChange}
-                        className={FormStyles.TEXTAREA}
+                        className={styleSheet.inputStyles.TEXTAREA}
                     />
                 </div>
 
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <p className='flex flex-row gap-2 items-center'>
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+
+                    <p className={styleSheet.containerStyles.ROW}>
                         <input
-                        type='checkbox'
-                        id='tag'
-                        name='tag'
-                        value='driver_too_far'
-                        onChange={handleTagToggle}
-                        className={FormStyles.CHECK}
-                    />
+                            type="checkbox"
+                            value="driver_too_far"
+                            onChange={handleTagToggle}
+                            className={styleSheet.inputStyles.CHECK}
+                        />
                         Водій далеко
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className={styleSheet.containerStyles.ROW}>
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='long_wait_time'
+                            type="checkbox"
+                            value="long_wait_time"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Довге очікування
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className={styleSheet.containerStyles.ROW}>
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='changed_plans'
+                            type="checkbox"
+                            value="changed_plans"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Змінились плани
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className={styleSheet.containerStyles.ROW}>
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='wrong_pickup_location'
+                            type="checkbox"
+                            value="wrong_pickup_location"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Неправильна початкова точка
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className={styleSheet.containerStyles.ROW}>
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='found_another_transport'
+                            type="checkbox"
+                            value="found_another_transport"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Знайдено інший транспорт
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className={styleSheet.containerStyles.ROW}>
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='driver_not_responding'
+                            type="checkbox"
+                            value="driver_not_responding"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Водій не відповідає
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className={styleSheet.containerStyles.ROW}>
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='price_too_high'
+                            type="checkbox"
+                            value="price_too_high"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Занадто висока ціна
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className={styleSheet.containerStyles.ROW}>
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='emergency'
+                            type="checkbox"
+                            value="emergency"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Надзвичайна ситуація
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className={styleSheet.containerStyles.ROW}>
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='other'
+                            type="checkbox"
+                            value="other"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Інше
                     </p>
@@ -190,13 +163,12 @@ export default function ClientCancelOrderForm({
                 </div>
 
                 <button
-                    type='submit'
-                    className={FormStyles.BUTTON_PRIMARY}
+                    type="submit"
+                    className={styleSheet.inputStyles.BUTTON_PRIMARY}
                 >
                     Скасувати
                 </button>
             </form>
-
         </div>
-    )
+    );
 }

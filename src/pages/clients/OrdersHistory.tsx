@@ -2,117 +2,138 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
+import { styleSheet } from "@/styles/Form";
 
-import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
-import { BUTTON } from "@/styles/Button";
-
-import { useOrdersHistory, useCurrentOrder, useCancelOrder } from "@/hooks/useClients";
+import {
+    useOrdersHistory,
+    useCurrentOrder,
+} from "@/hooks/useClients";
 import type { OrdersView } from "@/types/views";
 
 export default function OrdersHistoryPage(): React.ReactElement {
     const { data, loading, error } = useOrdersHistory();
-    const { data: currentOrder, loading: currentLoading } = useCurrentOrder();
+    const { data: currentOrder, loading: currentLoading } =
+        useCurrentOrder();
 
     if (loading || currentLoading) {
-        return <p className={TEXT.accent_1}>Загрузка…</p>;
+        return (
+            <p className={styleSheet.textStyles.MUTED}>
+                Завантаження…
+            </p>
+        );
     }
 
     if (error) {
-        return <p className="text-red-600">Ошибка загрузки</p>;
+        return (
+            <p className={styleSheet.textStyles.ERROR}>
+                Помилка завантаження
+            </p>
+        );
     }
 
     return (
         <DefaultLayout>
-            <section className="max-w-7xl mx-auto px-8 py-16 flex flex-col gap-10">
-                <h1 className={`${TEXT.title} text-3xl`}>
-                    Мои заказы
+            <section className={styleSheet.contentStyles.SECTION}>
+                <h1 className={styleSheet.textStyles.H1}>
+                    Мої замовлення
                 </h1>
 
-                {/* ТЕКУЩИЙ ЗАКАЗ */}
-                <div className="border border-gray-200 rounded p-6 bg-white">
-                    <h2 className={`${TEXT.subtitle} text-lg mb-4`}>
-                        Текущий заказ
+                {/* ПОТОЧНЕ ЗАМОВЛЕННЯ */}
+                <div className={styleSheet.containerStyles.CARD}>
+                    <h2 className={styleSheet.textStyles.H4}>
+                        Поточне замовлення
                     </h2>
 
                     {!currentOrder ? (
-                        <p className={TEXT.accent_1}>
-                            Активного заказа нет
+                        <p className={styleSheet.textStyles.MUTED}>
+                            Активного замовлення немає
                         </p>
                     ) : (
-                        <div className="flex items-center justify-between gap-6">
-                            <div className="flex flex-col gap-1">
-                                <p className={TEXT.default}>
-                                    Заказ #{currentOrder.id}
+                        <div className={styleSheet.containerStyles.ROW}>
+                            <div className={styleSheet.containerStyles.COLUMN}>
+                                <p className={styleSheet.textStyles.DEFAULT}>
+                                    Замовлення #{currentOrder.id}
                                 </p>
-                                <p className={TEXT.default}>
+                                <p className={styleSheet.textStyles.DEFAULT}>
                                     Статус: {currentOrder.status}
                                 </p>
-                                <p className={TEXT.default}>
-                                    Класс: {currentOrder.order_class}
+                                <p className={styleSheet.textStyles.DEFAULT}>
+                                    Клас: {currentOrder.order_class}
                                 </p>
                             </div>
 
                             <Link
                                 to={`/orders/${currentOrder.id}`}
-                                className={BUTTON.default}
+                                className={styleSheet.inputStyles.BUTTON_PRIMARY}
                             >
-                                Открыть
+                                Відкрити
                             </Link>
-
                         </div>
                     )}
                 </div>
 
-                {/* ИСТОРИЯ */}
-                <div className="border border-gray-200 rounded bg-white overflow-x-auto">
-                    <h2 className={`${TEXT.subtitle} text-lg px-6 py-4 border-b`}>
-                        История заказов
+                {/* ІСТОРІЯ */}
+                <div className={styleSheet.containerStyles.CARD}>
+                    <h2 className={styleSheet.textStyles.H4}>
+                        Історія замовлень
                     </h2>
 
                     {!data || data.length === 0 ? (
-                        <p className={`${TEXT.accent_1} px-6 py-4`}>
-                            История пуста
+                        <p className={styleSheet.textStyles.MUTED}>
+                            Історія порожня
                         </p>
                     ) : (
-                        <table className="w-full border-collapse">
-                            <thead className="bg-gray-50">
+                        <table className={styleSheet.tableStyles.TABLE}>
+                            <thead className={styleSheet.tableStyles.THEAD}>
                             <tr>
-                                <th className="text-left px-4 py-3 border-b">ID</th>
-                                <th className="text-left px-4 py-3 border-b">Статус</th>
-                                <th className="text-left px-4 py-3 border-b">Класс</th>
-                                <th className="text-left px-4 py-3 border-b">Дата</th>
-                                <th className="text-left px-4 py-3 border-b">Действия</th>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    ID
+                                </th>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    Статус
+                                </th>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    Клас
+                                </th>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    Дата
+                                </th>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    Дії
+                                </th>
                             </tr>
                             </thead>
+
                             <tbody>
                             {data.map((order: OrdersView) => (
                                 <tr
                                     key={order.id}
-                                    className={`hover:bg-gray-50 ${
+                                    className={
                                         currentOrder?.id === order.id
                                             ? "bg-yellow-50"
-                                            : ""
-                                    }`}
+                                            : styleSheet.tableStyles.TR
+                                    }
                                 >
-                                    <td className="px-4 py-3 border-b">
+                                    <td className={styleSheet.tableStyles.TD}>
                                         {order.id}
                                     </td>
-                                    <td className="px-4 py-3 border-b">
+                                    <td className={styleSheet.tableStyles.TD}>
                                         {order.status}
                                     </td>
-                                    <td className="px-4 py-3 border-b">
+                                    <td className={styleSheet.tableStyles.TD}>
                                         {order.order_class}
                                     </td>
-                                    <td className="px-4 py-3 border-b">
-                                        {new Date(order.created_at).toLocaleString()}
+                                    <td className={styleSheet.tableStyles.TD}>
+                                        {new Date(
+                                            order.created_at
+                                        ).toLocaleString()}
                                     </td>
-                                    <td className="px-4 py-3 border-b">
+                                    <td className={styleSheet.tableStyles.TD}>
                                         <Link
                                             to={`/orders/${order.id}`}
-                                            className={LINK.default}
+                                            className={styleSheet.textStyles.LINK}
                                         >
-                                            Открыть
+                                            Відкрити
                                         </Link>
                                     </td>
                                 </tr>

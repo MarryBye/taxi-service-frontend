@@ -1,11 +1,11 @@
 import React from "react";
-import type {RateOrderSchema} from "@/types/workers";
-import {FormStyles} from "@/styles/Form";
+import type { RateOrderSchema } from "@/types/workers";
 
+import { styleSheet } from "@/styles/Form";
 
 export default function WorkerRateOrderForm({
-    submitHandler
-}: {
+                                                submitHandler
+                                            }: {
     submitHandler: (form: RateOrderSchema) => void;
 }): React.ReactElement {
 
@@ -52,193 +52,163 @@ export default function WorkerRateOrderForm({
     }
 
     return (
-        <div
-            className={FormStyles.CARD}
-        >
-            <h1
-                className={FormStyles.H2}
-            >
+        <div className={styleSheet.containerStyles.CARD}>
+            <h1 className={styleSheet.textStyles.H2}>
                 Оцінка замовлення
             </h1>
 
             <form
                 onSubmit={handleSubmit}
-                className={FormStyles.SMALL_CONTAINER}
+                className={styleSheet.containerStyles.SMALL_CONTAINER}
             >
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
                     <label
-                        htmlFor='mark'
-                        className={FormStyles.DEFAULT}
+                        htmlFor="mark"
+                        className={styleSheet.textStyles.DEFAULT}
                     >
                         Коментар:
                     </label>
+
                     <input
-                        type='number'
-                        id='mark'
-                        name='mark'
-                        min='0'
-                        max='5'
+                        type="number"
+                        id="mark"
+                        name="mark"
+                        min="0"
+                        max="5"
                         value={form.mark}
-                        placeholder='5'
+                        placeholder="5"
                         onChange={handleMarkChange}
-                        className={FormStyles.TEXTAREA}
+                        className={styleSheet.inputStyles.INPUT}
                     />
                 </div>
 
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
                     <label
-                        htmlFor='comment'
-                        className={FormStyles.DEFAULT}
+                        htmlFor="comment"
+                        className={styleSheet.textStyles.DEFAULT}
                     >
                         Коментар:
                     </label>
+
                     <textarea
-                        id='comment'
-                        name='comment'
+                        id="comment"
+                        name="comment"
                         value={form.comment}
-                        placeholder='Чудова поїздка, клієнт був...'
+                        placeholder="Чудова поїздка, клієнт був..."
                         onChange={handleCommentChange}
-                        className={FormStyles.TEXTAREA}
+                        className={styleSheet.inputStyles.TEXTAREA}
                     />
                 </div>
 
-                <div
-                    className={FormStyles.SMALL_CONTAINER}
-                >
-                    <p className='flex flex-row gap-2 items-center'>
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='accurate'
+                            type="checkbox"
+                            value="accurate"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Охайний
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='friendly'
+                            type="checkbox"
+                            value="friendly"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Дружній
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='respectful'
+                            type="checkbox"
+                            value="respectful"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Поважний
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='communicative'
+                            type="checkbox"
+                            value="communicative"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Комунікативний
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='polite'
+                            type="checkbox"
+                            value="polite"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Ввічливий
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='on_time'
+                            type="checkbox"
+                            value="on_time"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Вчасний
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='clear_instructions'
+                            type="checkbox"
+                            value="clear_instructions"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Зрозуміло пояснює
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='calm'
+                            type="checkbox"
+                            value="calm"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Спокійний
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='helpful'
+                            type="checkbox"
+                            value="helpful"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Допомагає
                     </p>
 
-                    <p className='flex flex-row gap-2 items-center'>
+                    <p className="flex flex-row gap-2 items-center">
                         <input
-                            type='checkbox'
-                            id='tag'
-                            name='tag'
-                            value='other'
+                            type="checkbox"
+                            value="other"
                             onChange={handleTagToggle}
-                            className={FormStyles.CHECK}
+                            className={styleSheet.inputStyles.CHECK}
                         />
                         Інше
                     </p>
-
                 </div>
 
                 <button
-                    type='submit'
-                    className={FormStyles.BUTTON_PRIMARY}
+                    type="submit"
+                    className={styleSheet.inputStyles.BUTTON_PRIMARY}
                 >
                     Оцінити
                 </button>
             </form>
-
         </div>
-    )
+    );
 }
