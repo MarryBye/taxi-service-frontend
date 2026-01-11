@@ -185,7 +185,14 @@ export default function AdminUserDetailPage(): React.ReactElement {
                                     <p className={styleSheet.textStyles.SUBTLE}>Автомобіль</p>
                                     <p className={styleSheet.textStyles.DEFAULT}>
                                         {driverInfo.car
-                                            ? `${driverInfo.car.mark} ${driverInfo.car.model}`
+                                            ? (
+                                                <Link
+                                                    to={`/admin/cars/${driverInfo.car?.id}`}
+                                                    className={`${styleSheet.textStyles.LINK_NO_DECORATION}`}
+                                                >
+                                                    {`${driverInfo.car?.mark} ${driverInfo.car?.model}`},
+                                                </Link>
+                                            )
                                             : "Не призначено"}
                                     </p>
                                 </div>

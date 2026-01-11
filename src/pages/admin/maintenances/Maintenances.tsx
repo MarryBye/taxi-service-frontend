@@ -2,20 +2,22 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ContentTable } from "@/components/ui/ContentTable";
+import { LoaderBlock } from "@/components/ui/Loader";
 
-import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
-import { BUTTON } from "@/styles/Button";
+import { styleSheet } from "@/styles/Form";
+import { FaPlus, FaInfo, FaMinus, FaEdit } from "react-icons/fa";
 
-import { useMaintenances } from "@/hooks/admin/useMaintenances";
+import { useMaintenancesList } from "@/hooks/useAdmin";
+import type { MaintenancesView } from "@/types/views";
 
 export default function AdminMaintenancesListPage(): React.ReactElement {
-    const { data, loading, error } = useMaintenances();
+    const { data, loading, error } = useMaintenancesList();
 
     if (loading) {
         return (
             <AdminLayout>
-                <p className={TEXT.accent_1}>Загрузка обслуживаний…</p>
+                <LoaderBlock />
             </AdminLayout>
         );
     }
@@ -23,8 +25,8 @@ export default function AdminMaintenancesListPage(): React.ReactElement {
     if (error) {
         return (
             <AdminLayout>
-                <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
-                    Не удалось загрузить список обслуживаний
+                <div className={styleSheet.containerStyles.CARD}>
+                    {error}
                 </div>
             </AdminLayout>
         );
@@ -32,147 +34,84 @@ export default function AdminMaintenancesListPage(): React.ReactElement {
 
     return (
         <AdminLayout>
-            <section className="flex flex-col gap-8">
-                {/* ===== HEADER ===== */}
+            <section
+                className={`${styleSheet.contentStyles.SECTION} flex flex-col gap-8`}
+            >
                 <div className="flex flex-col md:flex-row justify-between gap-6">
                     <div>
-                        <h1 className={`${TEXT.title} text-3xl mb-2`}>
-                            Обслуживание автомобилей
+                        <h1 className={`${styleSheet.textStyles.H1} mb-2`}>
+                            Обслуговування
                         </h1>
-                        <p className={TEXT.accent_1}>
-                            Диагностика, ремонт и техническое обслуживание
+
+                        <p className={styleSheet.textStyles.SMALL}>
+                            Керування технічним обслуговуванням
                         </p>
                     </div>
 
                     <Link
                         to="/admin/maintenances/create"
-                        className={BUTTON.default}
+                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
                     >
-                        + Добавить обслуживание
+                        <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                            <FaPlus /> Створити
+                        </div>
                     </Link>
                 </div>
 
-                {/* ===== TABLE ===== */}
-                <div className="border border-gray-200 rounded bg-white overflow-x-auto">
-                    {!data || data.length === 0 ? (
-                        <p className={`${TEXT.accent_1} px-6 py-6`}>
-                            Записей об обслуживании пока нет
-                        </p>
-                    ) : (
-                        <table className="w-full border-collapse">
-                            <thead className="bg-gray-50">
-                            <tr>
-                                <th className="text-left px-4 py-3 border-b">
-                                    ID
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Автомобиль
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Описание
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Стоимость
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Статус
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Период
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Создано
-                                </th>
-                                <th className="text-left px-4 py-3 border-b">
-                                    Действия
-                                </th>
-                            </tr>
-                            </thead>
+                <ContentTable
+                    content={data!}
+                    table_map={{
+                        "ID": (row: MaintenancesView): React.ReactNode =>
+                            String(row.id),
 
-                            <tbody>
-                            {data.map((m: any) => (
-                                <tr
-                                    key={m.id}
-                                    className="hover:bg-gray-50"
-                                >
-                                    <td className="px-4 py-3 border-b">
-                                        {m.id}
-                                    </td>
+                        "Автомобіль": (row: MaintenancesView): React.ReactNode =>
+                            (<Link
+                                to={`/admin/cars/${row.car?.id}`}
+                                className={`${styleSheet.textStyles.LINK_NO_DECORATION}`}
+                            >
+                                {`${row.car?.mark} ${row.car?.model}`},
+                            </Link>),
 
-                                    <td className="px-4 py-3 border-b">
-                                        #{m.car_id}
-                                    </td>
+                        "Вартість": (row: MaintenancesView): React.ReactNode =>
+                            `${row.cost} грн`,
 
-                                    <td className="px-4 py-3 border-b max-w-xs truncate">
-                                        {m.description}
-                                    </td>
+                        "Статус": (row: MaintenancesView): React.ReactNode =>
+                            `${row.status}`,
 
-                                    <td className="px-4 py-3 border-b">
-                                        {m.cost} грн
-                                    </td>
+                        "Початок": (row: MaintenancesView): React.ReactNode =>
+                            new Date(row.maintenance_start).toLocaleDateString(),
 
-                                    <td className="px-4 py-3 border-b">
-                                            <span
-                                                className={
-                                                    m.status === "completed"
-                                                        ? "text-green-600"
-                                                        : m.status === "in_progress"
-                                                            ? "text-yellow-600"
-                                                            : "text-gray-700"
-                                                }
-                                            >
-                                                {m.status}
-                                            </span>
-                                    </td>
+                        "Завершення": (row: MaintenancesView): React.ReactNode =>
+                            new Date(row.maintenance_end).toLocaleDateString(),
 
-                                    <td className="px-4 py-3 border-b">
-                                        <div className="flex flex-col text-sm">
-                                                <span>
-                                                    {m.maintenance_start
-                                                        ? new Date(
-                                                            m.maintenance_start
-                                                        ).toLocaleDateString()
-                                                        : "—"}
-                                                </span>
-                                            <span>
-                                                    {m.maintenance_end
-                                                        ? new Date(
-                                                            m.maintenance_end
-                                                        ).toLocaleDateString()
-                                                        : "—"}
-                                                </span>
-                                        </div>
-                                    </td>
+                        "Дії": (row: MaintenancesView): React.ReactNode => (
+                            <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                                <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                                    <Link
+                                        to={`/admin/maintenances/${row.id}`}
+                                        className={styleSheet.textStyles.LINK_NO_DECORATION}
+                                    >
+                                        <FaInfo />
+                                    </Link>
 
-                                    <td className="px-4 py-3 border-b">
-                                        {new Date(
-                                            m.created_at
-                                        ).toLocaleDateString()}
-                                    </td>
+                                    <Link
+                                        to={`/admin/maintenances/${row.id}/edit`}
+                                        className={styleSheet.textStyles.LINK_NO_DECORATION}
+                                    >
+                                        <FaEdit />
+                                    </Link>
 
-                                    <td className="px-4 py-3 border-b">
-                                        <div className="flex gap-3">
-                                            <Link
-                                                to={`/admin/maintenances/${m.id}`}
-                                                className={LINK.default}
-                                            >
-                                                Открыть
-                                            </Link>
-
-                                            <Link
-                                                to={`/admin/maintenances/${m.id}/edit`}
-                                                className={LINK.default}
-                                            >
-                                                Редактировать
-                                            </Link>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
+                                    <Link
+                                        to={`/admin/maintenances/${row.id}/delete`}
+                                        className={styleSheet.textStyles.LINK_NO_DECORATION}
+                                    >
+                                        <FaMinus />
+                                    </Link>
+                                </div>
+                            </div>
+                        ),
+                    }}
+                />
             </section>
         </AdminLayout>
     );

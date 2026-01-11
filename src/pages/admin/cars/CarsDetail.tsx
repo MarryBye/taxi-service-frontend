@@ -1,35 +1,34 @@
 import React from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { styleSheet } from "@/styles/Form";
 
-import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
-import { BUTTON } from "@/styles/Button";
+import { useCarInfo } from "@/hooks/useAdmin";
+import type { CarsView } from "@/types/views";
 
-import { useCarInfo, useDeleteCar } from "@/hooks/useAdmin";
+import { FaBackward } from "react-icons/fa";
+import { LoaderBlock } from "@/components/ui/Loader";
 
 export default function AdminCarDetailPage(): React.ReactElement {
-    const navigate = useNavigate();
     const { carId } = useParams<{ carId: string }>();
     const id = carId ? Number(carId) : null;
 
-    const { data: car, loading, error } = useCarInfo(id);
-    const { mutate: deleteCar } = useDeleteCar(id);
+    const { data: car, loading: carLoading, error: carError } = useCarInfo(id);
 
-    if (loading) {
+    if (carLoading) {
         return (
             <AdminLayout>
-                <p className={TEXT.accent_1}>Загрузка автомобиля…</p>
+                <LoaderBlock />
             </AdminLayout>
         );
     }
 
-    if (error || !car) {
+    if (carError || !car) {
         return (
             <AdminLayout>
-                <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
-                    Автомобиль не найден
+                <div className={styleSheet.emphasisStyles.BOX_DANGER}>
+                    Помилка завантаження автомобіля
                 </div>
             </AdminLayout>
         );
@@ -37,132 +36,129 @@ export default function AdminCarDetailPage(): React.ReactElement {
 
     return (
         <AdminLayout>
-            <section className="max-w-4xl flex flex-col gap-8">
-                {/* HEADER */}
-                <div className="flex justify-between items-center">
+            <section
+                className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
+            >
+                <div className="flex flex-col md:flex-row justify-between gap-6">
                     <div>
-                        <h1 className={`${TEXT.title} text-3xl mb-1`}>
-                            {car.mark} {car.model}
+                        <h1 className={`${styleSheet.textStyles.H1} mb-2`}>
+                            Автомобілі
                         </h1>
-                        <p className={TEXT.accent_1}>
-                            Детали автомобиля
+
+                        <p className={styleSheet.textStyles.SMALL}>
+                            Інформація про автомобіль
                         </p>
                     </div>
 
                     <Link
                         to="/admin/cars"
-                        className={BUTTON.transparent}
+                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
                     >
-                        ← Назад
+                        <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                            <FaBackward /> Повернутись
+                        </div>
                     </Link>
                 </div>
 
-                {/* INFO */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border border-gray-200 rounded p-6 bg-white">
-                    <div>
-                        <p className={TEXT.accent_2}>ID</p>
-                        <p className={TEXT.default}>{car.id}</p>
+                <div className={styleSheet.containerStyles.CARD}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Марка</p>
+                            <p className={styleSheet.textStyles.BOLD}>
+                                {car.mark}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Модель</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {car.model}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Номерний знак</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {car.number_plate}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Колір</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {car.color}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Клас авто</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {car.car_class}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Статус</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {car.car_status}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Місцезнаходження</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {car.city.country.full_name}, {car.city.name}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Дата створення</p>
+                            <p className={styleSheet.textStyles.SMALL}>
+                                {new Date(car.created_at).toLocaleString()}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Останнє оновлення</p>
+                            <p className={styleSheet.textStyles.SMALL}>
+                                {new Date(car.changed_at).toLocaleString()}
+                            </p>
+                        </div>
                     </div>
 
-                    <div>
-                        <p className={TEXT.accent_2}>Гос. номер</p>
-                        <p className={TEXT.default}>{car.number_plate}</p>
-                    </div>
+                    <hr className={styleSheet.otherStyles.DIVIDER} />
 
                     <div>
-                        <p className={TEXT.accent_2}>Марка</p>
-                        <p className={TEXT.default}>{car.mark}</p>
-                    </div>
-
-                    <div>
-                        <p className={TEXT.accent_2}>Модель</p>
-                        <p className={TEXT.default}>{car.model}</p>
-                    </div>
-
-                    <div>
-                        <p className={TEXT.accent_2}>Цвет</p>
-                        <p className={TEXT.default}>{car.color}</p>
-                    </div>
-
-                    <div>
-                        <p className={TEXT.accent_2}>Класс</p>
-                        <p className={TEXT.default}>{car.car_class}</p>
-                    </div>
-
-                    <div>
-                        <p className={TEXT.accent_2}>Статус</p>
-                        <p
-                            className={
-                                car.car_status === "available"
-                                    ? "text-green-600"
-                                    : car.car_status === "busy"
-                                        ? "text-yellow-600"
-                                        : car.car_status === "on_maintenance"
-                                            ? "text-orange-600"
-                                            : "text-red-600"
-                            }
-                        >
-                            {car.car_status}
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className={TEXT.accent_2}>Водитель</p>
-                        {
-                            car.driver ? (
-                                <Link
-                                    className={LINK.default}
-                                    to={`/admin/users/${car.driver.id}`}
-                                >
-                                    {car.driver.first_name} {car.driver.last_name}
-                                </Link>
-                            ) : (
-                                "Не призначено"
-                            )
-                        }
-
-                    </div>
-
-                    <div>
-                        <p className={TEXT.accent_2}>Локация</p>
-                        <p className={TEXT.default}>
-                            {car.city.name}, {car.city.country.full_name}
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className={TEXT.accent_2}>Создан</p>
-                        <p className={TEXT.default}>
-                            {new Date(car.created_at).toLocaleString()}
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className={TEXT.accent_2}>Обновлён</p>
-                        <p className={TEXT.default}>
-                            {new Date(car.changed_at).toLocaleString()}
+                        <p className={styleSheet.textStyles.SUBTLE}>Водій</p>
+                        <p className={styleSheet.textStyles.DEFAULT}>
+                            {car.driver
+                                ?   (
+                                        <Link
+                                            to={`/admin/users/${car.driver?.id}`}
+                                            className={`${styleSheet.textStyles.LINK_NO_DECORATION}`}
+                                        >
+                                            {`${car.driver?.first_name} ${car.driver?.last_name}`},
+                                        </Link>
+                                    )
+                                : "Не призначено"}
                         </p>
                     </div>
                 </div>
 
-                {/* ACTIONS */}
-                <div className="flex gap-4">
+                <div className={styleSheet.containerStyles.ROW}>
                     <Link
                         to={`/admin/cars/${car.id}/edit`}
-                        className={BUTTON.default}
+                        className={styleSheet.inputStyles.BUTTON_WARNING}
                     >
-                        Редактировать
+                        Редагувати
                     </Link>
 
-                    <button
-                        className={BUTTON.warning}
-                        onClick={() => {
-                            deleteCar(car.id);
-                            navigate("/admin/cars");
-                        }}
+                    <Link
+                        to={`/admin/cars/${car.id}/delete`}
+                        className={styleSheet.inputStyles.BUTTON_DANGER}
                     >
-                        Удалить
-                    </button>
+                        Видалити
+                    </Link>
                 </div>
             </section>
         </AdminLayout>

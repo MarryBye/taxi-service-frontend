@@ -126,11 +126,16 @@ export function useAdminOrderInfo(orderId: number | null) {
     );
 }
 
-export function useUpdateOrder(orderId: number) {
-    return useApiMutation<
-        adminsTypes.UpdateOrderSchema,
-        views.OrdersView
-    >((data) => adminsApi.update_order(orderId, data));
+export function useAdminOrderStat(orderId: number | null) {
+    return useApiQuery<views.OrdersStatView>(
+        () => {
+            if (!orderId) {
+                return Promise.reject("orderId is null");
+            }
+            return adminsApi.order_stat(orderId);
+        },
+        [orderId]
+    );
 }
 
 export function useMaintenancesList() {
@@ -163,6 +168,13 @@ export function useDeleteMaintenance(maintenanceId: number) {
     return useApiMutation<void, null>(
         () => adminsApi.delete_maintenance(maintenanceId)
     );
+}
+
+export function useCreateMaintenance() {
+    return useApiMutation<
+        adminsTypes.CreateMaintenanceSchema,
+        views.MaintenancesView
+    >((data) => adminsApi.create_maintenance(data));
 }
 
 export function useTransactionsList() {

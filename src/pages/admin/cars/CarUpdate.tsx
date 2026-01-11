@@ -5,27 +5,27 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { styleSheet } from "@/styles/Form";
 
 import {
-    useUpdateMaintenance, useMaintenanceInfo
+    useUpdateCar, useCarInfo
 } from "@/hooks/useAdmin";
 
-import type { UpdateMaintenanceSchema } from "@/types/admin";
-import UpdateMaintenanceForm from "@/components/forms/admin/UpdateMaintenanceForm";
+import type { UpdateCarSchema } from "@/types/admin";
+import UpdateCarForm from "@/components/forms/admin/UpdateCarForm";
 import {FaBackward} from "react-icons/fa";
 import {LoaderBlock} from "@/components/ui/Loader";
 
-export default function AdminMaintenanceUpdatePage(): React.ReactElement {
+export default function AdminCarUpdatePage(): React.ReactElement {
     const navigate = useNavigate();
-    const { maintenanceId } = useParams<{ maintenanceId: string }>();
-    const id = maintenanceId ? Number(maintenanceId) : null;
+    const { carId } = useParams<{ carId: string }>();
+    const id = carId ? Number(carId) : null;
 
-    const {mutate: updateMaintenance,
+    const {mutate: updateCar,
         loading: updateLoading,
         error: updateError,
-    } = useUpdateMaintenance(id!);
+    } = useUpdateCar(id!);
 
-    const { data: maintenance, loading: maintenanceLoading, error: maintenanceError } = useMaintenanceInfo(id);
+    const { data: car, loading: carLoading, error: carError } = useCarInfo(id);
 
-    if (maintenanceLoading) {
+    if (carLoading) {
         return (
             <AdminLayout>
                 <LoaderBlock />
@@ -33,11 +33,11 @@ export default function AdminMaintenanceUpdatePage(): React.ReactElement {
         );
     }
 
-    if (maintenanceError) {
+    if (carError) {
         return (
             <AdminLayout>
                 <div className={styleSheet.emphasisStyles.BOX_DANGER}>
-                    Помилка завантаження обслуговування
+                    Помилка завантаження автомобіля
                 </div>
             </AdminLayout>
         );
@@ -56,16 +56,16 @@ export default function AdminMaintenanceUpdatePage(): React.ReactElement {
                         <h1
                             className={`${styleSheet.textStyles.H1} mb-2`}
                         >
-                            Обслуговування
+                            Автомобілі
                         </h1>
 
                         <p className={styleSheet.textStyles.SMALL}>
-                            Оновлення обслуговування
+                            Оновлення автомобіля
                         </p>
                     </div>
 
                     <Link
-                        to="/admin/maintenances"
+                        to="/admin/cars"
                         className={styleSheet.inputStyles.BUTTON_SECONDARY}
                     >
                         <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
@@ -74,12 +74,17 @@ export default function AdminMaintenanceUpdatePage(): React.ReactElement {
                     </Link>
                 </div>
 
-                <UpdateMaintenanceForm
-                    startValues={maintenance!}
+                <UpdateCarForm
+                    startValues={car!}
                     submitHandler={
-                        (form: UpdateMaintenanceSchema) => {
-                            updateMaintenance(form);
-                            navigate("/admin/maintenances");
+                        (form: UpdateCarSchema) => {
+                            const {
+                                mark, model, number_plate, city_id, color, car_class, car_status, driver_id
+                            } = form;
+                            updateCar({
+                                mark, model, number_plate, city_id, color, car_class, car_status, driver_id
+                            });
+                            navigate("/admin/cars");
                         }
                     }
                 />

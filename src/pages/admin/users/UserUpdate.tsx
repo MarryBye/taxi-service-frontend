@@ -76,7 +76,7 @@ export default function AdminUserUpdatePage(): React.ReactElement {
                 </div>
 
                 <UpdateUserForm
-                    startValues={user}
+                    startValues={user!}
                     submitHandler={
                         (form: UpdateUserSchema) => {
                             const {
@@ -97,6 +97,7 @@ export default function AdminUserUpdatePage(): React.ReactElement {
                                 password,
                                 role
                             });
+                            navigate('/admin/users')
                         }
                     }
                 />

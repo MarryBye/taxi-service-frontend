@@ -2,9 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ContentTable } from "@/components/ui/ContentTable";
+import { LoaderBlock } from "@/components/ui/Loader";
 
-import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
+import { styleSheet } from "@/styles/Form";
+import {FaPlus, FaInfo, FaMinus, FaEdit} from "react-icons/fa";
 
 import { useAdminOrdersList } from "@/hooks/useAdmin";
 import type { OrdersView } from "@/types/views";
@@ -15,7 +17,7 @@ export default function AdminOrdersListPage(): React.ReactElement {
     if (loading) {
         return (
             <AdminLayout>
-                <p className={TEXT.accent_1}>Загрузка заказов…</p>
+                <LoaderBlock />
             </AdminLayout>
         );
     }
@@ -23,128 +25,86 @@ export default function AdminOrdersListPage(): React.ReactElement {
     if (error) {
         return (
             <AdminLayout>
-                <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
-                    Не удалось загрузить список заказов
+                <div className={styleSheet.containerStyles.CARD}>
+                    {error}
                 </div>
             </AdminLayout>
-        );
+        )
     }
 
     return (
         <AdminLayout>
-            <section className="max-w-7xl mx-auto px-8 py-16 flex flex-col gap-8">
-                {/* HEADER */}
-                <div>
-                    <h1 className={`${TEXT.title} text-3xl mb-2`}>
-                        Заказы
-                    </h1>
-                    <p className={TEXT.accent_1}>
-                        Все заказы системы
-                    </p>
-                </div>
+            <section
+                className={`${styleSheet.contentStyles.SECTION} flex flex-col gap-8`}
+            >
+                <div
+                    className="flex flex-col md:flex-row justify-between gap-6"
+                >
+                    <div>
+                        <h1
+                            className={`${styleSheet.textStyles.H1} mb-2`}
+                        >
+                            Замовлення
+                        </h1>
 
-                {/* TABLE */}
-                <div className="border border-gray-200 rounded bg-white overflow-x-auto">
-                    {!data || data.length === 0 ? (
-                        <p className={`${TEXT.accent_1} px-6 py-6`}>
-                            Заказов пока нет
+                        <p className={styleSheet.textStyles.SMALL}>
+                            Керування замовленнями системи
                         </p>
-                    ) : (
-                        <table className="w-full border-collapse">
-                            <thead className="bg-gray-50">
-                            <tr>
-                                <Th>ID</Th>
-                                <Th>Клиент</Th>
-                                <Th>Водитель</Th>
-                                <Th>Статус</Th>
-                                <Th>Класс авто</Th>
-                                <Th>Сумма</Th>
-                                <Th>Создан</Th>
-                                <Th>Действия</Th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {data.map((order: OrdersView) => (
-                                <tr
-                                    key={order.id}
-                                    className="hover:bg-gray-50"
-                                >
-                                    <Td>{order.id}</Td>
-
-                                    <Td>
-                                        {order.client.first_name}{" "}
-                                        {order.client.last_name}
-                                    </Td>
-
-                                    <Td>
-                                        {order.driver
-                                            ? `${order.driver.first_name} ${order.driver.last_name}`
-                                            : "—"}
-                                    </Td>
-
-                                    <Td>
-                                        <StatusBadge status={order.status} />
-                                    </Td>
-
-                                    <Td>{order.order_class}</Td>
-
-                                    <Td>
-                                        {order.transaction.amount}
-                                    </Td>
-
-                                    <Td>
-                                        {new Date(
-                                            order.created_at
-                                        ).toLocaleDateString()}
-                                    </Td>
-
-                                    <Td>
-                                        <Link
-                                            to={`/admin/orders/${order.id}`}
-                                            className={LINK.default}
-                                        >
-                                            Подробнее
-                                        </Link>
-                                    </Td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    )}
+                    </div>
                 </div>
+
+                <ContentTable
+                    content={data!}
+                    table_map={{
+                        "ID": (row: OrdersView): React.ReactNode =>
+                            String(row.id),
+
+                        "Клієнт": (row: OrdersView): React.ReactNode =>
+(                            <Link
+                                to={`/admin/users/${row.client.id}`}
+                                className={`${styleSheet.textStyles.LINK_NO_DECORATION}`}
+                            >
+                                {row.client?.first_name} {row.client?.last_name}
+                            </Link>),
+
+                        "Водій": (row: OrdersView): React.ReactNode =>
+                            <span>
+                                {
+                                    row.driver ?
+                                        (<Link
+                                            to={`/admin/users/${row.driver.id}`}
+                                            className={`${styleSheet.textStyles.LINK_NO_DECORATION}`}
+                                        >
+                                            `${row.driver?.first_name} ${row.driver?.last_name}`
+                                        </Link>)
+                                        :
+                                        `Не призначено`
+                                },
+                            </span>,
+
+                        "Статус": (row: OrdersView): React.ReactNode =>
+                            `${row.status}`,
+
+                        "Клас": (row: OrdersView): React.ReactNode =>
+                            `${row.order_class}`,
+
+                        "Дії": (row: OrdersView): React.ReactNode => (
+                            <div
+                                className={styleSheet.containerStyles.SMALL_CONTAINER}
+                            >
+                                <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                                    <Link
+                                        to={`/admin/orders/${row.id}`}
+                                        className={`${styleSheet.textStyles.LINK_NO_DECORATION}`}
+                                    >
+                                        <FaInfo/>
+                                    </Link>
+                                </div>
+                            </div>
+                        ),
+                    }}
+                />
             </section>
         </AdminLayout>
-    );
-}
-
-/* ================= helpers ================= */
-
-function StatusBadge({ status }: { status: OrdersView["status"] }) {
-    const className =
-        status === "completed"
-            ? "text-green-600"
-            : status === "canceled"
-                ? "text-red-600"
-                : status === "in_progress"
-                    ? "text-yellow-600"
-                    : "text-gray-700";
-
-    return <span className={className}>{status}</span>;
-}
-
-function Th({ children }: { children: React.ReactNode }) {
-    return (
-        <th className="text-left px-4 py-3 border-b">
-            {children}
-        </th>
-    );
-}
-
-function Td({ children }: { children: React.ReactNode }) {
-    return (
-        <td className="px-4 py-3 border-b">
-            {children}
-        </td>
     );
 }

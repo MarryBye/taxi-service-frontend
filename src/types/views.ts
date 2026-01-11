@@ -94,10 +94,12 @@ export type MaintenancesView = {
     maintenance_end: string;
     created_at: string;
     changed_at: string;
+    status: enums.MaintenanceStatuses;
 }
 
 export type TransactionsView = {
     id: number;
+    user: UsersView;
     balance_type: enums.BalanceTypes;
     transaction_type: enums.TransactionType;
     payment_method: enums.PaymentMethods;

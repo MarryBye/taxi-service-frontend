@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { styleSheet } from "@/styles/Form";
-import { FaHome, FaUsers, FaTaxi, FaFirstOrder, FaCarCrash } from "react-icons/fa";
+import {FaHome, FaUsers, FaTaxi, FaFirstOrder, FaCarCrash, FaCashRegister} from "react-icons/fa";
 
 export function AdminNav(): React.ReactElement {
     return (
@@ -40,6 +40,15 @@ export function AdminNav(): React.ReactElement {
             >
                 <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
                     <FaFirstOrder/>Замовлення
+                </div>
+            </Link>
+
+            <Link
+                to="/admin/transactions"
+                className={`${styleSheet.inputStyles.BUTTON_SECONDARY} w-full`}
+            >
+                <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                    <FaCashRegister/>Транзакції
                 </div>
             </Link>
 

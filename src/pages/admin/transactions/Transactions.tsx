@@ -2,10 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ContentTable } from "@/components/ui/ContentTable";
+import { LoaderBlock } from "@/components/ui/Loader";
 
-import { TEXT } from "@/styles/Text";
-import { LINK } from "@/styles/Link";
-import { BUTTON } from "@/styles/Button";
+import { styleSheet } from "@/styles/Form";
+import { FaPlus, FaInfo } from "react-icons/fa";
 
 import { useTransactionsList } from "@/hooks/useAdmin";
 import type { TransactionsView } from "@/types/views";
@@ -16,7 +17,7 @@ export default function AdminTransactionsListPage(): React.ReactElement {
     if (loading) {
         return (
             <AdminLayout>
-                <p className={TEXT.accent_1}>Загрузка транзакций…</p>
+                <LoaderBlock />
             </AdminLayout>
         );
     }
@@ -24,8 +25,8 @@ export default function AdminTransactionsListPage(): React.ReactElement {
     if (error) {
         return (
             <AdminLayout>
-                <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
-                    Не удалось загрузить список транзакций
+                <div className={styleSheet.containerStyles.CARD}>
+                    {error}
                 </div>
             </AdminLayout>
         );
@@ -33,113 +34,66 @@ export default function AdminTransactionsListPage(): React.ReactElement {
 
     return (
         <AdminLayout>
-            <section className="max-w-7xl mx-auto px-8 py-16 flex flex-col gap-8">
-                {/* HEADER */}
+            <section
+                className={`${styleSheet.contentStyles.SECTION} flex flex-col gap-8`}
+            >
                 <div className="flex flex-col md:flex-row justify-between gap-6">
                     <div>
-                        <h1 className={`${TEXT.title} text-3xl mb-2`}>
-                            Транзакции
+                        <h1 className={`${styleSheet.textStyles.H1} mb-2`}>
+                            Транзакції
                         </h1>
-                        <p className={TEXT.accent_1}>
-                            Все платежи и начисления в системе
+
+                        <p className={styleSheet.textStyles.SMALL}>
+                            Керування транзакціями системи
                         </p>
                     </div>
 
                     <Link
                         to="/admin/transactions/create"
-                        className={BUTTON.default}
+                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
                     >
-                        + Создать транзакцию
+                        <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                            <FaPlus /> Створити
+                        </div>
                     </Link>
                 </div>
 
-                {/* TABLE */}
-                <div className="border border-gray-200 rounded bg-white overflow-x-auto">
-                    {!data || data.length === 0 ? (
-                        <p className={`${TEXT.accent_1} px-6 py-6`}>
-                            Транзакций пока нет
-                        </p>
-                    ) : (
-                        <table className="w-full border-collapse">
-                            <thead className="bg-gray-50">
-                            <tr>
-                                <Th>ID</Th>
-                                <Th>Тип баланса</Th>
-                                <Th>Тип операции</Th>
-                                <Th>Метод оплаты</Th>
-                                <Th>Сумма</Th>
-                                <Th>Дата</Th>
-                                <Th>Действия</Th>
-                            </tr>
-                            </thead>
+                <ContentTable
+                    content={data!}
+                    table_map={{
+                        "ID": (row: TransactionsView): React.ReactNode =>
+                            String(row.id),
 
-                            <tbody>
-                            {data.map((tx: TransactionsView) => (
-                                <tr
-                                    key={tx.id}
-                                    className="hover:bg-gray-50"
-                                >
-                                    <Td>{tx.id}</Td>
+                        "Тип балансу": (row: TransactionsView): React.ReactNode =>
+                            row.balance_type,
 
-                                    <Td>{tx.balance_type}</Td>
+                        "Тип транзакції": (row: TransactionsView): React.ReactNode =>
+                            row.transaction_type,
 
-                                    <Td>{tx.transaction_type}</Td>
+                        "Метод оплати": (row: TransactionsView): React.ReactNode =>
+                            row.payment_method,
 
-                                    <Td>{tx.payment_method}</Td>
+                        "Сума": (row: TransactionsView): React.ReactNode =>
+                            `${row.amount} грн`,
 
-                                    <Td>
-                                            <span
-                                                className={
-                                                    tx.transaction_type === "credit"
-                                                        ? "text-green-600 font-medium"
-                                                        : tx.transaction_type === "debit"
-                                                            ? "text-red-600 font-medium"
-                                                            : "text-gray-700"
-                                                }
-                                            >
-                                                {tx.amount}
-                                            </span>
-                                    </Td>
+                        "Дата створення": (row: TransactionsView): React.ReactNode =>
+                            new Date(row.created_at).toLocaleString(),
 
-                                    <Td>
-                                        {new Date(
-                                            tx.created_at
-                                        ).toLocaleString()}
-                                    </Td>
-
-                                    <Td>
-                                        <Link
-                                            to={`/admin/transactions/${tx.id}`}
-                                            className={LINK.default}
-                                        >
-                                            Открыть
-                                        </Link>
-                                    </Td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
+                        "Дії": (row: TransactionsView): React.ReactNode => (
+                            <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                                <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                                    <Link
+                                        to={`/admin/transactions/${row.id}`}
+                                        className={styleSheet.textStyles.LINK_NO_DECORATION}
+                                    >
+                                        <FaInfo />
+                                    </Link>
+                                </div>
+                            </div>
+                        ),
+                    }}
+                />
             </section>
         </AdminLayout>
-    );
-}
-
-/* ================= helpers ================= */
-
-function Th({ children }: { children: React.ReactNode }) {
-    return (
-        <th className="text-left px-4 py-3 border-b">
-            {children}
-        </th>
-    );
-}
-
-function Td({ children }: { children: React.ReactNode }) {
-    return (
-        <td className="px-4 py-3 border-b">
-            {children}
-        </td>
     );
 }

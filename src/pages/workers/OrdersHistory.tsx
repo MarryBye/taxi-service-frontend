@@ -6,6 +6,7 @@ import { styleSheet } from "@/styles/Form";
 
 import { useDriverOrdersHistory, useDriverStats } from "@/hooks/useDrivers";
 import type { OrdersView } from "@/types/views";
+import {DefaultLayout} from "@/components/layout/DefaultLayout";
 
 export default function DriverOrdersHistoryPage(): React.ReactElement {
     const {
@@ -51,9 +52,7 @@ export default function DriverOrdersHistoryPage(): React.ReactElement {
     }
 
     return (
-        <DriverLayout
-            left={null}
-            right={
+        <DefaultLayout>
                 <section
                     className={`${styleSheet.contentStyles.SECTION} flex flex-col gap-10`}
                 >
@@ -190,8 +189,7 @@ export default function DriverOrdersHistoryPage(): React.ReactElement {
                         )}
                     </div>
                 </section>
-            }
-        />
+        </DefaultLayout>
     );
 }
 

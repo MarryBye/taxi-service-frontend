@@ -1,27 +1,33 @@
 import React from "react";
-import type { UpdateCarSchema } from "@/types/admin";
+import type {UpdateCarSchema, UpdateUserSchema} from "@/types/admin";
 
 import { styleSheet } from "@/styles/Form";
 import { useCountriesList } from "@/hooks/usePublic";
 import { useCitiesList } from "@/hooks/usePublic";
 import { useUsersList } from "@/hooks/useAdmin";
+import type {CarsView} from "@/types/views";
 
 export default function UpdateCarForm({
-                                          submitHandler
+                                          submitHandler,
+    startValues
                                       }: {
+    startValues?: CarsView;
     submitHandler: (form: UpdateCarSchema) => void;
 }): React.ReactElement {
 
     const [form, setForm] = React.useState<UpdateCarSchema>({
-        mark: "",
-        model: "",
-        number_plate: "",
-        country_id: 1,
-        city_id: -1,
-        color: "black",
-        car_class: "standard",
-        car_status: "available",
-        driver_id: -1
+        mark: startValues ? startValues.mark : "",
+        model: startValues ? startValues.model : "",
+        number_plate: startValues ? startValues.number_plate : "",
+        country_id: startValues ? startValues.city.country.id : 1,
+        city_id: startValues ? startValues.city.id : 1,
+        color: startValues ? startValues.color : "black",
+        car_class: startValues ? startValues.car_class : "standard",
+        car_status: startValues ? startValues.car_status : "available",
+        driver_id: startValues ?
+            startValues.driver ?
+                startValues.driver.id : 1
+            : 1,
     });
 
     const { data: users, loading: users_loading } = useUsersList();

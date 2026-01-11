@@ -4,12 +4,13 @@ import type { UpdateUserSchema } from "@/types/admin";
 import { styleSheet } from "@/styles/Form";
 import { useCountriesList } from "@/hooks/usePublic";
 import { useCitiesList } from "@/hooks/usePublic";
+import type {UsersView} from "@/types/views";
 
 export default function UpdateUserForm({
     startValues,
     submitHandler
 }: {
-    startValues?: UpdateUserSchema;
+    startValues?: UsersView;
     submitHandler: (form: UpdateUserSchema) => void;
 }): React.ReactElement {
 

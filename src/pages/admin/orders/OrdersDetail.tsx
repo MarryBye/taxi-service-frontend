@@ -1,126 +1,213 @@
 import React from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { styleSheet } from "@/styles/Form";
 
-import { TEXT } from "@/styles/Text";
-import { BUTTON } from "@/styles/Button";
+import { useAdminOrderStat, useAdminOrderInfo } from "@/hooks/useAdmin";
+import type { OrdersView, OrdersStatView } from "@/types/views";
 
-import { useAdminOrderInfo } from "@/hooks/useAdmin";
-import type { OrdersView } from "@/types/views";
+import { FaBackward } from "react-icons/fa";
+import { LoaderBlock } from "@/components/ui/Loader";
 
 export default function AdminOrderDetailPage(): React.ReactElement {
-    const navigate = useNavigate();
     const { orderId } = useParams<{ orderId: string }>();
     const id = orderId ? Number(orderId) : null;
 
-    const { data: order, loading, error } = useAdminOrderInfo(id);
+    const { data: order, loading: orderLoading, error: orderError } =
+        useAdminOrderInfo(id);
 
-    if (loading) {
+    const {
+        data: orderStat,
+        loading: ordersStatLoading,
+        error: ordersStatError,
+    } = useAdminOrderStat(id);
+
+    if (orderLoading || ordersStatLoading) {
         return (
             <AdminLayout>
-                <p className={TEXT.accent_1}>Загрузка заказа…</p>
+                <LoaderBlock />
             </AdminLayout>
         );
     }
 
-    if (error || !order) {
+    if (orderError || !order || ordersStatError || !orderStat) {
         return (
             <AdminLayout>
-                <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
-                    Заказ не найден
+                <div className={styleSheet.emphasisStyles.BOX_DANGER}>
+                    Помилка завантаження замовлення
                 </div>
             </AdminLayout>
         );
     }
 
-    const o: OrdersView = order;
+    console.log(order, orderStat)
 
     return (
         <AdminLayout>
-            <section className="max-w-3xl mx-auto px-8 py-16 flex flex-col gap-10">
-                {/* HEADER */}
-                <div className="flex justify-between items-center">
+            <section
+                className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
+            >
+                <div className="flex flex-col md:flex-row justify-between gap-6">
                     <div>
-                        <h1 className={`${TEXT.title} text-3xl mb-1`}>
-                            Заказ #{o.id}
+                        <h1 className={`${styleSheet.textStyles.H1} mb-2`}>
+                            Замовлення
                         </h1>
-                        <p className={TEXT.accent_1}>
-                            Детальная информация о заказе
+
+                        <p className={styleSheet.textStyles.SMALL}>
+                            Інформація про замовлення
                         </p>
                     </div>
 
-                    <Link to="/admin/orders" className={BUTTON.transparent}>
-                        ← К списку
-                    </Link>
-                </div>
-
-                {/* INFO */}
-                <div className="border border-gray-200 rounded p-6 bg-white flex flex-col gap-5">
-                    <Info label="Статус">
-                        {o.status}
-                    </Info>
-
-                    <Info label="Класс автомобиля">
-                        {o.order_class}
-                    </Info>
-
-                    <Info label="Клиент">
-                        {o.client.first_name} {o.client.last_name}
-                    </Info>
-
-                    <Info label="Водитель">
-                        {o.driver
-                            ? `${o.driver.first_name} ${o.driver.last_name}`
-                            : "Не назначен"}
-                    </Info>
-
-                    <Info label="Сумма">
-                        {o.transaction.amount}
-                    </Info>
-
-                    <Info label="Маршрут">
-                        Дистанция: {o.route.distance} км
-                    </Info>
-
-                    <div className="flex gap-8">
-                        <Info label="Создан">
-                            {new Date(o.created_at).toLocaleString()}
-                        </Info>
-
-                        <Info label="Обновлён">
-                            {new Date(o.changed_at).toLocaleString()}
-                        </Info>
-                    </div>
-                </div>
-
-                {/* ACTIONS */}
-                <div className="flex gap-4">
                     <Link
-                        to={`/admin/orders/${o.id}/edit`}
-                        className={BUTTON.default}
+                        to="/admin/orders"
+                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
                     >
-                        Редактировать
+                        <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                            <FaBackward /> Повернутись
+                        </div>
                     </Link>
+                </div>
+
+                <div className={styleSheet.containerStyles.CARD}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Клієнт</p>
+                            <p className={styleSheet.textStyles.BOLD}>
+                                {
+                                    <Link
+                                        to={`/admin/users/${order.client.id}`}
+                                        className={`${styleSheet.textStyles.LINK_NO_DECORATION}`}
+                                    >
+                                        {order.client.first_name} {order.client.last_name}
+                                    </Link>
+                                },
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Водій</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {
+                                    order.driver ?
+                                        (<Link
+                                            to={`/admin/users/${order.driver.id}`}
+                                            className={`${styleSheet.textStyles.LINK_NO_DECORATION}`}
+                                        >
+                                            {order.driver?.first_name} {order.driver?.last_name}
+                                        </Link>)
+                                        :
+                                        `Не призначено`
+                                },
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Клас авто</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {order.order_class}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Статус</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {order.status}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Маршрут</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {order.route.start_location.country}, {order.route.start_location.city}, {order.route.start_location.street}, {order.route.start_location.house} → {order.route.end_location.country}, {order.route.end_location.city}, {order.route.end_location.street}, {order.route.end_location.house}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Транзакція</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                <Link
+                                    to={`/admin/transactions/${order.transaction.id}`}
+                                    className={`${styleSheet.textStyles.LINK_NO_DECORATION}`}
+                                >
+                                    Транзакція №{order.transaction.id}
+                                </Link>
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Дата створення</p>
+                            <p className={styleSheet.textStyles.SMALL}>
+                                {new Date(order.created_at).toLocaleString()}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Останнє оновлення</p>
+                            <p className={styleSheet.textStyles.SMALL}>
+                                {new Date(order.changed_at).toLocaleString()}
+                            </p>
+                        </div>
+
+                        {order.finished_at && (
+                            <div>
+                                <p className={styleSheet.textStyles.SUBTLE}>Завершено</p>
+                                <p className={styleSheet.textStyles.SMALL}>
+                                    {new Date(order.finished_at).toLocaleString()}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    <hr className={styleSheet.otherStyles.DIVIDER} />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>
+                                Рейтинг від клієнта
+                            </p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {orderStat.rating_by_client?.mark ?? "—"}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>
+                                Рейтинг від водія
+                            </p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {orderStat.rating_by_driver?.mark ?? "—"}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Тривалість</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {orderStat.duration
+                                    ? `${orderStat.duration} хв`
+                                    : "—"}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Скасування</p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                Ініціатор: {
+                                    orderStat.cancel_info
+                                    ? ` ${orderStat.cancel_info.canceled_by === order.client.id ? "Клієнт" : "Водій"}`
+                                    : "—"
+                                }
+                            </p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                Коментар: {
+                                    orderStat.cancel_info
+                                    ? `${orderStat.cancel_info.comment}`
+                                    : "—"}
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </AdminLayout>
-    );
-}
-
-/* ================= helpers ================= */
-
-function Info({
-                  label,
-                  children,
-              }: {
-    label: string;
-    children: React.ReactNode;
-}) {
-    return (
-        <div>
-            <p className={TEXT.accent_2}>{label}</p>
-            <p className={TEXT.default}>{children}</p>
-        </div>
     );
 }

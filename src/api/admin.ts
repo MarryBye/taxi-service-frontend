@@ -83,11 +83,10 @@ export const order_info = async (
     return api.get(`/admin/orders/${orderId}`)
 }
 
-export const update_order = async (
-    orderId: number,
-    data: admin_schema.UpdateOrderSchema
-): Promise<views_schemas.OrdersView> => {
-    return api.put(`/admin/orders/${orderId}`, data)
+export const order_stat = async (
+    orderId: number
+): Promise<views_schemas.OrdersStatView> => {
+    return api.get(`/admin/orders/${orderId}/stats`)
 }
 
 export const maintenances_list = async (): Promise<views_schemas.MaintenancesView[]> => {
@@ -98,6 +97,12 @@ export const maintenance_info = async (
     maintenanceId: number
 ): Promise<views_schemas.MaintenancesView> => {
     return api.get(`/admin/maintenances/${maintenanceId}`)
+}
+
+export const create_maintenance = async (
+    data: admin_schema.CreateMaintenanceSchema
+): Promise<views_schemas.MaintenancesView> => {
+    return api.post(`/admin/maintenances`, data)
 }
 
 export const delete_maintenance = async (

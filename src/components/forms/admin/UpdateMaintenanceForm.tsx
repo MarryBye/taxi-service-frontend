@@ -2,15 +2,18 @@ import React from "react";
 import type { UpdateMaintenanceSchema } from "@/types/admin";
 
 import { styleSheet } from "@/styles/Form";
+import type {MaintenancesView} from "@/types/views";
 
 export default function UpdateMaintenanceForm({
-                                                  submitHandler
+                                                  submitHandler,
+    startValues,
                                               }: {
     submitHandler: (form: UpdateMaintenanceSchema) => void;
+    startValues: MaintenancesView;
 }): React.ReactElement {
 
     const [form, setForm] = React.useState<UpdateMaintenanceSchema>({
-        status: "completed"
+        status: startValues ? startValues.status : 'in_progress',
     });
 
     function handleSubmit(e: React.FormEvent) {

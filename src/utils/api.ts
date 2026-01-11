@@ -9,20 +9,23 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const { accessToken } = useAuthStore.getState();
+    const { accessToken, tokenType } = useAuthStore.getState();
 
-    if (accessToken) {
-        config.headers.Token = accessToken;
+    if (accessToken && tokenType) {
+        config.headers.Token = `${accessToken}`;
     }
 
     return config;
 });
 
 api.interceptors.response.use(
-    (res) => res.data,
-    (err) => {
-        console.error('API error:', err);
-        return Promise.reject(err);
+    (response) => response.data,
+    (error) => {
+        if (error.response?.status === 401) {
+            useAuthStore.getState().clearAuth();
+        }
+
+        return Promise.reject(error);
     }
 );
 

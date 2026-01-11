@@ -5,13 +5,13 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { styleSheet } from "@/styles/Form";
 import { FaBackward } from "react-icons/fa";
 
-import { useCreateUser } from "@/hooks/useAdmin";
-import type { CreateUserSchema } from "@/types/admin";
-import CreateUserForm from "@/components/forms/admin/CreateUserForm";
+import { useCreateCar } from "@/hooks/useAdmin";
+import type { CreateCarSchema } from "@/types/admin";
+import CreateCarForm from "@/components/forms/admin/CreateCarForm";
 
-export default function AdminUserCreatePage(): React.ReactElement {
+export default function AdminCarCreatePage(): React.ReactElement {
     const navigate = useNavigate();
-    const { mutate: createUser, loading, error } = useCreateUser();
+    const { mutate: createCar, loading, error } = useCreateCar();
 
     return (
         <AdminLayout>
@@ -26,11 +26,11 @@ export default function AdminUserCreatePage(): React.ReactElement {
                         <h1
                             className={`${styleSheet.textStyles.H1} mb-2`}
                         >
-                            Користувачі
+                            Автомобілі
                         </h1>
 
                         <p className={styleSheet.textStyles.SMALL}>
-                            Створення користувача
+                            Створення автомобіля
                         </p>
                     </div>
 
@@ -44,30 +44,31 @@ export default function AdminUserCreatePage(): React.ReactElement {
                     </Link>
                 </div>
 
-                <CreateUserForm
-                    submitHandler={(form: CreateUserSchema) => {
+                <CreateCarForm
+                    submitHandler={(form: CreateCarSchema) => {
                         const {
-                            login,
-                            password,
-                            first_name,
-                            last_name,
-                            email,
-                            tel_number,
+                            mark,
+                            model,
+                            number_plate,
                             city_id,
-                            role,
+                            color,
+                            car_class,
+                            car_status,
+                            driver_id
                         } = form;
 
-                        createUser({
-                            login,
-                            password,
-                            first_name,
-                            last_name,
-                            email,
-                            tel_number,
+                        createCar({
+                            mark,
+                            model,
+                            number_plate,
                             city_id,
-                            role,
+                            color,
+                            car_class,
+                            car_status,
+                            driver_id
                         });
-                        navigate('/admin/users')
+
+                        navigate("/admin/cars");
                     }}
                 />
             </section>

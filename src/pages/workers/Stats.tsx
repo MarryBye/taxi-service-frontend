@@ -8,6 +8,7 @@ import { useDriverStats } from "@/hooks/useDrivers";
 
 import type { DriversStatView } from "@/types/views";
 import type * as enums from "@/types/enums/db";
+import {DefaultLayout} from "@/components/layout/DefaultLayout";
 
 /* ===== helpers для тегів ===== */
 
@@ -88,97 +89,94 @@ export default function DriverStatsPage(): React.ReactElement {
     const cancelTags = stats.all_tags?.filter(isDriverCancelTag) ?? [];
 
     return (
-        <DriverLayout
-            left={null}
-            right={
-                <section
-                    className={`${styleSheet.contentStyles.SECTION} flex flex-col gap-10`}
-                >
-                    {/* HEADER */}
-                    <div className="flex flex-col md:flex-row justify-between gap-6">
-                        <div>
-                            <h1
-                                className={`${styleSheet.textStyles.H1} mb-2`}
-                            >
-                                Статистика водія
-                            </h1>
-
-                            <p className={styleSheet.textStyles.PARAGRAPH}>
-                                Показники вашої роботи
-                            </p>
-                        </div>
-
-                        <Link
-                            to="/driver"
-                            className={styleSheet.inputStyles.BUTTON_SECONDARY}
+        <DefaultLayout>
+            <section
+                className={`${styleSheet.contentStyles.SECTION} flex flex-col gap-10`}
+            >
+                {/* HEADER */}
+                <div className="flex flex-col md:flex-row justify-between gap-6">
+                    <div>
+                        <h1
+                            className={`${styleSheet.textStyles.H1} mb-2`}
                         >
-                            ← Назад до панелі
-                        </Link>
+                            Статистика водія
+                        </h1>
+
+                        <p className={styleSheet.textStyles.PARAGRAPH}>
+                            Показники вашої роботи
+                        </p>
                     </div>
 
-                    {/* STATS */}
-                    <div
-                        className="grid grid-cols-1 md:grid-cols-4 gap-6"
+                    <Link
+                        to="/driver"
+                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
                     >
-                        <StatCard
-                            title="Поїздок усього"
-                            value={stats.rides_count}
-                        />
-                        <StatCard
-                            title="Завершено"
-                            value={stats.finished_rides_count}
-                            color={styleSheet.textStyles.SUCCESS}
-                        />
-                        <StatCard
-                            title="Скасовано"
-                            value={stats.canceled_rides_count}
-                            color={styleSheet.textStyles.ERROR}
-                        />
-                        <StatCard
-                            title="Рейтинг"
-                            value={stats.driver_rating ?? "—"}
-                        />
-                    </div>
+                        ← Назад до панелі
+                    </Link>
+                </div>
 
-                    <div
-                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                    >
-                        <StatCard
-                            title="Середня дистанція"
-                            value={
-                                stats.average_distance
-                                    ? `${stats.average_distance} км`
-                                    : "—"
-                            }
-                        />
-                        <StatCard
-                            title="Максимальна дистанція"
-                            value={
-                                stats.max_distance
-                                    ? `${stats.max_distance} км`
-                                    : "—"
-                            }
-                        />
-                    </div>
+                {/* STATS */}
+                <div
+                    className="grid grid-cols-1 md:grid-cols-4 gap-6"
+                >
+                    <StatCard
+                        title="Поїздок усього"
+                        value={stats.rides_count}
+                    />
+                    <StatCard
+                        title="Завершено"
+                        value={stats.finished_rides_count}
+                        color={styleSheet.textStyles.SUCCESS}
+                    />
+                    <StatCard
+                        title="Скасовано"
+                        value={stats.canceled_rides_count}
+                        color={styleSheet.textStyles.ERROR}
+                    />
+                    <StatCard
+                        title="Рейтинг"
+                        value={stats.driver_rating ?? "—"}
+                    />
+                </div>
 
-                    {/* TAGS */}
-                    <div
-                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                    >
-                        <TagsBlock
-                            title="Теги від клієнтів"
-                            tags={positiveTags}
-                            color={styleSheet.otherStyles.BADGE_SUCCESS}
-                        />
-                        <TagsBlock
-                            title="Причини скасувань"
-                            tags={cancelTags}
-                            color={styleSheet.otherStyles.BADGE_ERROR}
-                        />
-                    </div>
-                </section>
-            }
-        />
+                <div
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                >
+                    <StatCard
+                        title="Середня дистанція"
+                        value={
+                            stats.average_distance
+                                ? `${stats.average_distance} км`
+                                : "—"
+                        }
+                    />
+                    <StatCard
+                        title="Максимальна дистанція"
+                        value={
+                            stats.max_distance
+                                ? `${stats.max_distance} км`
+                                : "—"
+                        }
+                    />
+                </div>
+
+                {/* TAGS */}
+                <div
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                >
+                    <TagsBlock
+                        title="Теги від клієнтів"
+                        tags={positiveTags}
+                        color={styleSheet.otherStyles.BADGE_SUCCESS}
+                    />
+                    <TagsBlock
+                        title="Причини скасувань"
+                        tags={cancelTags}
+                        color={styleSheet.otherStyles.BADGE_ERROR}
+                    />
+                </div>
+            </section>
+        </DefaultLayout>
     );
 }
 

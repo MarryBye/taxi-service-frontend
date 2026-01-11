@@ -1,141 +1,55 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import {Link, useNavigate} from "react-router-dom";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { styleSheet } from "@/styles/Form";
+import { FaBackward } from "react-icons/fa";
 
-import { TEXT } from "@/styles/Text";
-import { BUTTON } from "@/styles/Button";
-
-import { useCreateTransaction } from "@/hooks/useAdmin";
+import {useCreateTransaction} from "@/hooks/useAdmin";
 import type { CreateTransactionSchema } from "@/types/admin";
+import CreateTransactionForm from "@/components/forms/admin/CreateTransactionForm";
 
 export default function AdminTransactionCreatePage(): React.ReactElement {
     const navigate = useNavigate();
-    const { mutate: createTransaction, loading, error } =
-        useCreateTransaction();
-
-    const [form, setForm] = useState<CreateTransactionSchema>({
-        user_id: 0,
-        balance_type: "payment",
-        transaction_type: "debit",
-        payment_method: "cash",
-        amount: 0,
-    });
-
-    function handleChange(
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) {
-        const { name, value } = e.target;
-
-        setForm((prev) => ({
-            ...prev,
-            [name]:
-                name === "user_id" || name === "amount"
-                    ? Number(value)
-                    : value,
-        }));
-    }
-
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-
-        await createTransaction(form);
-        navigate("/admin/transactions");
-    }
+    const { mutate: createTransaction, loading, error } = useCreateTransaction();
 
     return (
         <AdminLayout>
-            <section className="max-w-xl mx-auto px-8 py-16 flex flex-col gap-8">
-                {/* HEADER */}
-                <div>
-                    <h1 className={`${TEXT.title} text-3xl mb-2`}>
-                        Создание транзакции
-                    </h1>
-                    <p className={TEXT.accent_1}>
-                        Ручное начисление или списание средств
-                    </p>
+            <section
+                className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
+            >
+
+                <div
+                    className="flex flex-col md:flex-row justify-between gap-6"
+                >
+                    <div>
+                        <h1
+                            className={`${styleSheet.textStyles.H1} mb-2`}
+                        >
+                            Транзакції
+                        </h1>
+
+                        <p className={styleSheet.textStyles.SMALL}>
+                            Створення транзакції
+                        </p>
+                    </div>
+
+                    <Link
+                        to="/admin/transactions"
+                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
+                    >
+                        <div className={styleSheet.containerStyles.ROW_SMALL_GAP}>
+                            <FaBackward/> Повернутись
+                        </div>
+                    </Link>
                 </div>
 
-                {/* FORM */}
-                <form
-                    onSubmit={handleSubmit}
-                    className="flex flex-col gap-5 bg-white border border-gray-200 rounded p-6"
-                >
-                    <input
-                        type="number"
-                        name="user_id"
-                        placeholder="ID пользователя"
-                        value={form.user_id}
-                        onChange={handleChange}
-                        required
-                        className="border border-gray-300 rounded px-4 py-2"
-                    />
-
-                    <input
-                        type="number"
-                        name="amount"
-                        placeholder="Сумма"
-                        value={form.amount}
-                        onChange={handleChange}
-                        required
-                        className="border border-gray-300 rounded px-4 py-2"
-                    />
-
-                    <select
-                        name="transaction_type"
-                        value={form.transaction_type}
-                        onChange={handleChange}
-                        className="border border-gray-300 rounded px-4 py-2"
-                    >
-                        <option value="debit">Списание</option>
-                        <option value="credit">Начисление</option>
-                        <option value="refund">Возврат</option>
-                        <option value="penalty">Штраф</option>
-                    </select>
-
-                    <select
-                        name="balance_type"
-                        value={form.balance_type}
-                        onChange={handleChange}
-                        className="border border-gray-300 rounded px-4 py-2"
-                    >
-                        <option value="payment">Платёжный</option>
-                        <option value="earning">Заработок</option>
-                    </select>
-
-                    <select
-                        name="payment_method"
-                        value={form.payment_method}
-                        onChange={handleChange}
-                        className="border border-gray-300 rounded px-4 py-2"
-                    >
-                        <option value="cash">Наличные</option>
-                        <option value="credit_card">Карта</option>
-                    </select>
-
-                    {error && (
-                        <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded">
-                            Ошибка при создании транзакции
-                        </div>
-                    )}
-
-                    <div className="flex gap-4 pt-4">
-                        <button
-                            type="submit"
-                            className={BUTTON.default}
-                            disabled={loading}
-                        >
-                            Создать
-                        </button>
-
-                        <Link
-                            to="/admin/transactions"
-                            className={BUTTON.transparent}
-                        >
-                            Отмена
-                        </Link>
-                    </div>
-                </form>
+                <CreateTransactionForm
+                    submitHandler={(form: CreateTransactionSchema) => {
+                        createTransaction(form);
+                        navigate("/admin/transactions");
+                    }}
+                />
             </section>
         </AdminLayout>
     );

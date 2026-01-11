@@ -32,21 +32,20 @@ export function useAuth() {
         if (!token) return null;
 
         setToken(token.access_token, token.token_type);
-        navigate('/')
-        return token;
+        navigate("/");
     };
 
 
     const register = async (payload: authTypes.RegisterSchema) => {
-        navigate('/')
-        return await registerMutation(payload);
+        const result =  await registerMutation(payload);
+        navigate("/");
     };
 
     const logout = async () => {
         // @ts-ignore
-        await logoutMutation();
+        const result = await logoutMutation();
         clearAuth();
-        navigate('/')
+        navigate("/");
     };
 
     return {
