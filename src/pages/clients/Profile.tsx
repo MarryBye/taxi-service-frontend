@@ -5,49 +5,12 @@ import { DefaultLayout } from "@/components/layout/DefaultLayout";
 import { styleSheet } from "@/styles/Form";
 
 import { useProfile, useClientStats } from "@/hooks/useClients";
+import type { ClientStatView } from "@/types/views";
 
-import type * as enums from "@/types/enums/db";
-
-/* ===== helpers ===== */
-
-const CLIENT_TAGS: enums.ClientTags[] = [
-    "accurate",
-    "friendly",
-    "respectful",
-    "communicative",
-    "polite",
-    "on_time",
-    "clear_instructions",
-    "calm",
-    "helpful",
-    "other",
-];
-
-const CLIENT_CANCEL_TAGS: enums.ClientCancelTags[] = [
-    "driver_too_far",
-    "long_wait_time",
-    "changed_plans",
-    "wrong_pickup_location",
-    "found_another_transport",
-    "driver_not_responding",
-    "price_too_high",
-    "emergency",
-    "other",
-];
-
-function isClientTag(
-    tag: enums.ClientTags | enums.ClientCancelTags
-): tag is enums.ClientTags {
-    return CLIENT_TAGS.includes(tag as enums.ClientTags);
-}
-
-function isClientCancelTag(
-    tag: enums.ClientTags | enums.ClientCancelTags
-): tag is enums.ClientCancelTags {
-    return CLIENT_CANCEL_TAGS.includes(tag as enums.ClientCancelTags);
-}
-
-/* =================== */
+type TagStat = {
+    tag: string;
+    count: number;
+};
 
 export default function ProfilePage(): React.ReactElement {
     const {
@@ -72,7 +35,7 @@ export default function ProfilePage(): React.ReactElement {
         );
     }
 
-    if (profileError || statsError || !profile) {
+    if (profileError || statsError || !profile || !stats) {
         return (
             <DefaultLayout>
                 <div className={styleSheet.emphasisStyles.BOX_DANGER}>
@@ -82,8 +45,7 @@ export default function ProfilePage(): React.ReactElement {
         );
     }
 
-    const positiveTags = stats?.all_tags?.filter(isClientTag) ?? [];
-    const cancelTags = stats?.all_tags?.filter(isClientCancelTag) ?? [];
+    const tags: TagStat[] = stats.all_tags ?? [];
 
     return (
         <DefaultLayout>
@@ -136,53 +98,44 @@ export default function ProfilePage(): React.ReactElement {
                     </div>
 
                     {/* STATS */}
-                    {stats && (
-                        <>
-                            <div className={styleSheet.layoutStyles.GRID_3}>
-                                <StatCard title="Усього поїздок" value={stats.rides_count} />
-                                <StatCard
-                                    title="Завершено"
-                                    value={stats.finished_rides_count}
-                                />
-                                <StatCard
-                                    title="Скасовано"
-                                    value={stats.canceled_rides_count}
-                                />
-                            </div>
+                    <div className={styleSheet.layoutStyles.GRID_3}>
+                        <StatCard title="Усього поїздок" value={stats.rides_count} />
+                        <StatCard title="Завершено" value={stats.finished_rides_count} />
+                        <StatCard title="Скасовано" value={stats.canceled_rides_count} />
+                    </div>
 
-                            <div className={styleSheet.layoutStyles.GRID_2}>
-                                <StatCard
-                                    title="Середня дистанція"
-                                    value={
-                                        stats.average_distance
-                                            ? `${stats.average_distance} км`
-                                            : "—"
-                                    }
-                                />
-                                <StatCard
-                                    title="Максимальна дистанція"
-                                    value={
-                                        stats.max_distance
-                                            ? `${stats.max_distance} км`
-                                            : "—"
-                                    }
-                                />
-                            </div>
+                    <div className={styleSheet.layoutStyles.GRID_2}>
+                        <StatCard
+                            title="Середня дистанція"
+                            value={stats.average_distance ? `${stats.average_distance} км` : "—"}
+                        />
+                        <StatCard
+                            title="Максимальна дистанція"
+                            value={stats.max_distance ? `${stats.max_distance} км` : "—"}
+                        />
+                    </div>
 
-                            <div className={styleSheet.layoutStyles.GRID_2}>
-                                <TagsBlock
-                                    title="Теги від водіїв"
-                                    tags={positiveTags}
-                                    color="bg-green-100"
-                                />
-                                <TagsBlock
-                                    title="Причини скасувань"
-                                    tags={cancelTags}
-                                    color="bg-red-100"
-                                />
+                    {/* TAGS */}
+                    <div className={styleSheet.emphasisStyles.BOX}>
+                        <p className={`${styleSheet.textStyles.MUTED} mb-3`}>
+                            Теги
+                        </p>
+
+                        {tags.length === 0 ? (
+                            <p className={styleSheet.textStyles.SUBTLE}>—</p>
+                        ) : (
+                            <div className="flex flex-wrap gap-2">
+                                {tags.map(({ tag, count }) => (
+                                    <span
+                                        key={tag}
+                                        className="px-3 py-1 rounded text-sm bg-gray-100"
+                                    >
+                                        {tag} — {count}
+                                    </span>
+                                ))}
                             </div>
-                        </>
-                    )}
+                        )}
+                    </div>
                 </div>
             </section>
         </DefaultLayout>
@@ -211,39 +164,6 @@ function StatCard({
         <div className={styleSheet.emphasisStyles.BOX}>
             <p className={styleSheet.textStyles.MUTED}>{title}</p>
             <p className={styleSheet.textStyles.H2}>{value}</p>
-        </div>
-    );
-}
-
-function TagsBlock({
-                       title,
-                       tags,
-                       color,
-                   }: {
-    title: string;
-    tags: string[];
-    color: string;
-}) {
-    return (
-        <div className={styleSheet.emphasisStyles.BOX}>
-            <p className={`${styleSheet.textStyles.MUTED} mb-3`}>
-                {title}
-            </p>
-
-            {tags.length === 0 ? (
-                <p className={styleSheet.textStyles.SUBTLE}>—</p>
-            ) : (
-                <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className={`px-3 py-1 rounded text-sm ${color}`}
-                        >
-                            {tag}
-                        </span>
-                    ))}
-                </div>
-            )}
         </div>
     );
 }

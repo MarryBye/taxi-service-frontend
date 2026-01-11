@@ -85,7 +85,6 @@ export default function AdminUserUpdatePage(): React.ReactElement {
                                 email,
                                 tel_number,
                                 city_id,
-                                password,
                                 role
                             } = form;
                             updateUser({
@@ -94,7 +93,6 @@ export default function AdminUserUpdatePage(): React.ReactElement {
                                 email,
                                 tel_number,
                                 city_id,
-                                password,
                                 role
                             });
                             navigate('/admin/users')

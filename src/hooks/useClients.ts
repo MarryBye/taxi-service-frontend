@@ -47,12 +47,24 @@ export function useCurrentOrder() {
 }
 
 export function useOrderInfo(orderId: number | null) {
-    return useApiQuery<views.OrdersStatView>(
+    return useApiQuery<views.OrdersView>(
         () => {
             if (!orderId) {
                 return Promise.reject("orderId is null");
             }
             return authorizedApi.order_info(orderId);
+        },
+        [orderId]
+    );
+}
+
+export function useOrderStat(orderId: number | null) {
+    return useApiQuery<views.OrdersStatView>(
+        () => {
+            if (!orderId) {
+                return Promise.reject("orderId is null");
+            }
+            return authorizedApi.order_stat(orderId);
         },
         [orderId]
     );

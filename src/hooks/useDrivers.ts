@@ -27,6 +27,18 @@ export function useAcceptableOrders() {
     );
 }
 
+export function useDriverOrderInfo(orderId: number | null) {
+    return useApiQuery<views.OrdersView>(
+        () => {
+            if (!orderId) {
+                return Promise.reject("orderId is null");
+            }
+            return driversApi.order_info(orderId);
+        },
+        [orderId]
+    );
+}
+
 export function useDriverOrderStat(orderId: number | null) {
     return useApiQuery<views.OrdersStatView>(
         () => {

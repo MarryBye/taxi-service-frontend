@@ -1,5 +1,6 @@
 import type * as enums from '@/types/enums/db';
 import type * as common from '@/types/common';
+import type {ClientCancelTags, ClientTags, DriverCancelTags, DriverTags} from "@/types/enums/db";
 
 export type UsersView = {
     id: number;
@@ -23,7 +24,10 @@ export type ClientsStatView = {
     average_distance: number | null;
     max_distance: number | null;
     client_rating: number | null;
-    all_tags: (enums.ClientTags | enums.ClientCancelTags)[] | null;
+    all_tags: ({
+        tag: ClientTags | DriverCancelTags,
+        count: number,
+    })[] | null;
 }
 
 export type CarsView = {
@@ -61,7 +65,10 @@ export type DriversStatView = {
     average_distance: number | null;
     max_distance: number | null;
     driver_rating: number | null;
-    all_tags: (enums.DriverTags | enums.DriverCancelTags)[] | null;
+    all_tags: ({
+        tag: DriverTags | ClientCancelTags,
+        count: number,
+    })[] | null;
 }
 
 export type OrdersView = {

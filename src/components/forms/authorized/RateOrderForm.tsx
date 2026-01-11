@@ -18,6 +18,7 @@ export default function ClientRateOrderForm({
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         submitHandler(form);
+        console.log(form);
     }
 
     function handleMarkChange(e: React.ChangeEvent<HTMLInputElement>) {

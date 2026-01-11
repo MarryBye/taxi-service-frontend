@@ -39,7 +39,7 @@ export default function OrdersHistoryPage(): React.ReactElement {
                 </h1>
 
                 {/* ПОТОЧНЕ ЗАМОВЛЕННЯ */}
-                <div className={styleSheet.containerStyles.CARD}>
+                <div className={`${styleSheet.containerStyles.CARD} mb-4 mt-4`}>
                     <h2 className={styleSheet.textStyles.H4}>
                         Поточне замовлення
                     </h2>
@@ -49,26 +49,54 @@ export default function OrdersHistoryPage(): React.ReactElement {
                             Активного замовлення немає
                         </p>
                     ) : (
-                        <div className={styleSheet.containerStyles.ROW}>
-                            <div className={styleSheet.containerStyles.COLUMN}>
-                                <p className={styleSheet.textStyles.DEFAULT}>
-                                    Замовлення #{currentOrder.id}
-                                </p>
-                                <p className={styleSheet.textStyles.DEFAULT}>
-                                    Статус: {currentOrder.status}
-                                </p>
-                                <p className={styleSheet.textStyles.DEFAULT}>
-                                    Клас: {currentOrder.order_class}
-                                </p>
-                            </div>
+                        <table className={styleSheet.tableStyles.TABLE}>
+                            <thead className={styleSheet.tableStyles.THEAD}>
+                            <tr>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    ID
+                                </th>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    Статус
+                                </th>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    Клас
+                                </th>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    Дата
+                                </th>
+                                <th className={styleSheet.tableStyles.TH}>
+                                    Дії
+                                </th>
+                            </tr>
+                            </thead>
 
-                            <Link
-                                to={`/orders/${currentOrder.id}`}
-                                className={styleSheet.inputStyles.BUTTON_PRIMARY}
-                            >
-                                Відкрити
-                            </Link>
-                        </div>
+                            <tbody>
+                                <tr>
+                                    <td className={styleSheet.tableStyles.TD}>
+                                        {currentOrder.id}
+                                    </td>
+                                    <td className={styleSheet.tableStyles.TD}>
+                                        {currentOrder.status}
+                                    </td>
+                                    <td className={styleSheet.tableStyles.TD}>
+                                        {currentOrder.order_class}
+                                    </td>
+                                    <td className={styleSheet.tableStyles.TD}>
+                                        {new Date(
+                                            currentOrder.created_at
+                                        ).toLocaleString()}
+                                    </td>
+                                    <td className={styleSheet.tableStyles.TD}>
+                                        <Link
+                                            to={`/orders/${currentOrder.id}`}
+                                            className={styleSheet.textStyles.LINK}
+                                        >
+                                            Відкрити
+                                        </Link>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     )}
                 </div>
 

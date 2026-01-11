@@ -29,8 +29,14 @@ export const current_order = async (): Promise<views_schemas.OrdersView> => {
 
 export const order_info = async (
     orderId: number
-): Promise<views_schemas.OrdersStatView> => {
+): Promise<views_schemas.OrdersView> => {
     return api.get(`/client/orders/${orderId}`)
+}
+
+export const order_stat = async (
+    orderId: number
+): Promise<views_schemas.OrdersStatView> => {
+    return api.get(`/client/orders/${orderId}/stat`)
 }
 
 export const cancel_order = async (

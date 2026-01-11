@@ -15,10 +15,16 @@ export const acceptable_orders = async (): Promise<views_schemas.OrdersView[]> =
     return api.get('/driver/orders/acceptable')
 }
 
+export const order_info = async (
+    orderId: number
+): Promise<views_schemas.OrdersView> => {
+    return api.get(`/driver/orders/${orderId}`)
+}
+
 export const order_stat = async (
     orderId: number
 ): Promise<views_schemas.OrdersStatView> => {
-    return api.get(`/driver/orders/${orderId}`)
+    return api.get(`/driver/orders/${orderId}/stat`)
 }
 
 export const accept_order = async (
@@ -31,7 +37,7 @@ export const rate_order = async (
     orderId: number,
     data: driver_schema.RateOrderSchema
 ): Promise<views_schemas.OrdersStatView> => {
-    return api.post(`/driver/${orderId}/rate`, data)
+    return api.post(`/driver/orders/${orderId}/rate`, data)
 }
 
 export const cancel_order = async (

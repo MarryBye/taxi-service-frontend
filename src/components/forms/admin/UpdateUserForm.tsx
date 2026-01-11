@@ -15,7 +15,6 @@ export default function UpdateUserForm({
 }): React.ReactElement {
 
     const [form, setForm] = React.useState<UpdateUserSchema>({
-        password: "",
         first_name: startValues ? startValues.first_name : "",
         last_name: startValues ? startValues.last_name : "",
         email: startValues ? startValues.email : "",
@@ -166,21 +165,6 @@ export default function UpdateUserForm({
                             ))}
                         </select>
                     </div>
-                </div>
-
-                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
-                    <label className={styleSheet.textStyles.DEFAULT}>
-                        Пароль:
-                    </label>
-
-                    <input
-                        type="password"
-                        name="password"
-                        value={form.password}
-                        placeholder="Password"
-                        onChange={handleChange}
-                        className={styleSheet.inputStyles.INPUT}
-                    />
                 </div>
 
                 <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
