@@ -73,9 +73,11 @@ export default function DriverHomePage(): React.ReactElement {
                         <p className={styleSheet.textStyles.MUTED}>
                             Баланс
                         </p>
-                        <p className={styleSheet.textStyles.STRONG}>
+                        <Link
+                            to='/driver/withdraw_cash'
+                            className={styleSheet.inputStyles.BUTTON_SECONDARY}>
                             {profile.earning_balance ?? 0} грн
-                        </p>
+                        </Link>
                     </div>
 
                     <div className="flex flex-col gap-3 pt-4">

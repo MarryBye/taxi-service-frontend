@@ -11,3 +11,7 @@ export type RateOrderSchema = {
     comment: string;
     tags: enums.DriverTags[];
 }
+
+export type WithdrawCashSchema = {
+    amount: number;
+}

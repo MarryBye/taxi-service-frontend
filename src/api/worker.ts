@@ -2,6 +2,8 @@ import api from '@/utils/api';
 
 import * as driver_schema from '@/types/workers';
 import * as views_schemas from '@/types/views';
+import * as client_schemas from "@/types/authorized";
+import type {WithdrawCashSchema} from "@/types/workers";
 
 export const orders_history = async (): Promise<views_schemas.OrdersView[]> => {
     return api.get('/driver/orders')
@@ -67,4 +69,10 @@ export const submit_finish = async (
 
 export const stats = async (): Promise<views_schemas.DriversStatView> => {
     return api.get(`/driver/stats`)
+}
+
+export const withdraw_cash = async (
+    data: driver_schema.WithdrawCashSchema
+): Promise<any> => {
+    return api.put('/driver/withdraw_cash', data)
 }

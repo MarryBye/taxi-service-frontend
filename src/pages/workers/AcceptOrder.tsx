@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import {formatDuration} from "@/utils/helpers";
 import { DriverLayout } from "@/components/layout/DriverLayout";
 import { styleSheet } from "@/styles/Form";
 
@@ -18,6 +19,8 @@ import {
 import type { CancelOrderSchema, RateOrderSchema } from "@/types/workers";
 import WorkerRateOrderForm from "@/components/forms/workers/RateOrderForm";
 import WorkerCancelOrderForm from "@/components/forms/workers/CancelOrderForm";
+import {DefaultLayout} from "@/components/layout/DefaultLayout";
+import {useClientStats} from "@/hooks/useClients";
 
 export default function DriverOrderDetailPage(): React.ReactElement {
     const navigate = useNavigate();
@@ -41,141 +44,139 @@ export default function DriverOrderDetailPage(): React.ReactElement {
 
     if (infoLoading || statLoading || !orderInfo || !orderStat) {
         return (
-            <DriverLayout
-                left={null}
-                right={<div className={styleSheet.otherStyles.LOADER} />}
-            />
+            <DefaultLayout>
+                <div className={styleSheet.otherStyles.LOADER} />
+            </DefaultLayout>
         );
     }
 
     const status = orderInfo.status;
 
     return (
-        <DriverLayout
-            left={null}
-            right={
-                <section className={styleSheet.contentStyles.SECTION_NARROW}>
-                    {/* ===== HEADER ===== */}
-                    <div className="mb-6">
-                        <h1 className={styleSheet.textStyles.H2}>
-                            Замовлення #{orderInfo.id}
-                        </h1>
-                        <p className={styleSheet.textStyles.MUTED}>
-                            Статус: <b>{status}</b>
-                        </p>
-                    </div>
+        <DefaultLayout>
+            <section className={styleSheet.contentStyles.SECTION_NARROW}>
 
-                    {/* ===== ORDER INFO ===== */}
-                    <div className={`${styleSheet.containerStyles.CARD} mb-6`}>
-                        <p className={styleSheet.textStyles.SMALL}>
-                            Клієнт:{" "}
-                            {orderInfo.client.first_name}{" "}
-                            {orderInfo.client.last_name}
-                        </p>
+                <button
+                    className={styleSheet.inputStyles.BUTTON_SECONDARY}
+                    onClick={() => navigate("/driver")}
+                >
+                    ← Назад
+                </button>
 
-                        <p className={styleSheet.textStyles.SMALL}>
-                            Дистанція: {orderInfo.route.distance} км
-                        </p>
+                {/* ===== HEADER ===== */}
+                <div className="mb-6">
+                    <h1 className={styleSheet.textStyles.H2}>
+                        Замовлення #{orderInfo.id}
+                    </h1>
+                    <p className={styleSheet.textStyles.MUTED}>
+                        Статус: <b>{status}</b>
+                    </p>
+                </div>
 
-                        <p className={styleSheet.textStyles.SMALL}>
-                            Клас авто: {orderInfo.order_class}
-                        </p>
+                {/* ===== ORDER INFO ===== */}
+                <div className={`${styleSheet.containerStyles.CARD} mb-6`}>
+                    <p className={styleSheet.textStyles.SMALL}>
+                        Клієнт:{" "}
+                        {orderInfo.client.first_name}{" "}
+                        {orderInfo.client.last_name}{" "}
+                    </p>
 
-                        <p className={styleSheet.textStyles.SMALL}>
-                            Вартість: {orderInfo.transaction.amount} грн
-                        </p>
-                    </div>
+                    <p className={styleSheet.textStyles.SMALL}>
+                        Телефон:{" "}
+                        {orderInfo.client.tel_number}
+                    </p>
 
-                    {/* ===== ORDER STAT ===== */}
-                    <div className={`${styleSheet.containerStyles.CARD} mb-6`}>
-                        <p className={styleSheet.textStyles.SMALL}>
-                            Тривалість:{" "}
-                            {orderStat.duration
-                                ? `${orderStat.duration} хв`
-                                : "—"}
-                        </p>
+                    <p className={styleSheet.textStyles.SMALL}>
+                        Дистанція: {orderInfo.route.distance} км
+                    </p>
 
-                        {orderStat.cancel_info && (
-                            <div className="mt-4">
-                                <p className={styleSheet.textStyles.MUTED}>
-                                    Замовлення скасовано
-                                </p>
-                                <p className={styleSheet.textStyles.DEFAULT}>
-                                    {orderStat.cancel_info.comment}
-                                </p>
-                            </div>
-                        )}
+                    <p className={styleSheet.textStyles.SMALL}>
+                        Клас авто: {orderInfo.order_class}
+                    </p>
 
-                        {orderStat.rating_by_driver && (
-                            <div className="mt-4">
-                                <p className={styleSheet.textStyles.MUTED}>
-                                    Ваша оцінка
-                                </p>
-                                <p className={styleSheet.textStyles.STRONG}>
-                                    {orderStat.rating_by_driver.mark} / 5
-                                </p>
-                            </div>
-                        )}
-                    </div>
+                    <p className={styleSheet.textStyles.SMALL}>
+                        Вартість: {orderInfo.transaction.amount} грн
+                    </p>
+                </div>
 
-                    {/* ===== ACTIONS ===== */}
-                    <div className="flex flex-col gap-4 mb-6">
-                        {status === "searching_for_driver" && (
+                {/* ===== ORDER STAT ===== */}
+                <div className={`${styleSheet.containerStyles.CARD} mb-6`}>
+                    <p className={styleSheet.textStyles.SMALL}>
+                        Тривалість: {formatDuration(orderStat.duration)}
+                    </p>
+
+                    {orderStat.cancel_info && (
+                        <div className="mt-4">
+                            <p className={styleSheet.textStyles.MUTED}>
+                                Замовлення скасовано
+                            </p>
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                {orderStat.cancel_info.comment}
+                            </p>
+                        </div>
+                    )}
+
+                    {orderStat.rating_by_driver && (
+                        <div className="mt-4">
+                            <p className={styleSheet.textStyles.MUTED}>
+                                Ваша оцінка
+                            </p>
+                            <p className={styleSheet.textStyles.STRONG}>
+                                {orderStat.rating_by_driver.mark} / 5
+                            </p>
+                        </div>
+                    )}
+                </div>
+
+                {/* ===== ACTIONS ===== */}
+                <div className="flex flex-col gap-4 mb-6">
+                    {status === "searching_for_driver" && (
+                        <PrimaryAction
+                            label="Прийняти замовлення"
+                            onClick={acceptOrder}
+                        />
+                    )}
+
+                    {status === "waiting_for_driver" && (
+                        <>
                             <PrimaryAction
-                                label="Прийняти замовлення"
-                                onClick={acceptOrder}
+                                label="Приїхав на точку"
+                                onClick={submitArrive}
                             />
-                        )}
+                            <CancelBlock onSubmit={cancelOrder} />
+                        </>
+                    )}
 
-                        {status === "waiting_for_driver" && (
-                            <>
-                                <PrimaryAction
-                                    label="Приїхав на точку"
-                                    onClick={submitArrive}
-                                />
-                                <CancelBlock onSubmit={cancelOrder} />
-                            </>
-                        )}
-
-                        {status === "waiting_for_client" && (
-                            <>
-                                <PrimaryAction
-                                    label="Почати поїздку"
-                                    onClick={submitStart}
-                                />
-                                <CancelBlock onSubmit={cancelOrder} />
-                            </>
-                        )}
-
-                        {status === "in_progress" && (
-                            <>
-                                <PrimaryAction
-                                    label="Завершити поїздку"
-                                    onClick={submitFinish}
-                                />
-                                <CancelBlock onSubmit={cancelOrder} />
-                            </>
-                        )}
-
-                        {status === "waiting_for_marks" && (
-                            <WorkerRateOrderForm
-                                submitHandler={(form: RateOrderSchema) =>
-                                    rateOrder(form)
-                                }
+                    {status === "waiting_for_client" && (
+                        <>
+                            <PrimaryAction
+                                label="Почати поїздку"
+                                onClick={submitStart}
                             />
-                        )}
-                    </div>
+                            <CancelBlock onSubmit={cancelOrder} />
+                        </>
+                    )}
 
-                    {/* ===== BACK ===== */}
-                    <button
-                        className={styleSheet.inputStyles.BUTTON_SECONDARY}
-                        onClick={() => navigate("/driver")}
-                    >
-                        ← Назад
-                    </button>
-                </section>
-            }
-        />
+                    {status === "in_progress" && (
+                        <>
+                            <PrimaryAction
+                                label="Завершити поїздку"
+                                onClick={submitFinish}
+                            />
+                            <CancelBlock onSubmit={cancelOrder} />
+                        </>
+                    )}
+
+                    {status === "waiting_for_marks" && (
+                        <WorkerRateOrderForm
+                            submitHandler={(form: RateOrderSchema) =>
+                                rateOrder(form)
+                            }
+                        />
+                    )}
+                </div>
+            </section>
+        </DefaultLayout>
     );
 }
 

@@ -70,9 +70,11 @@ export default function ProfilePage(): React.ReactElement {
                         </div>
 
                         <div className="flex flex-wrap gap-4">
-                            <span className={styleSheet.inputStyles.BUTTON_SECONDARY}>
-                                Баланс: {profile.payment_balance ?? 0} грн
-                            </span>
+                            <Link
+                                to='/profile/add_funds'
+                                className={styleSheet.inputStyles.BUTTON_SECONDARY}>
+                                {profile.payment_balance ?? 0} грн
+                            </Link>
 
                             <Link
                                 to="/profile/edit"
@@ -105,6 +107,10 @@ export default function ProfilePage(): React.ReactElement {
                     </div>
 
                     <div className={styleSheet.layoutStyles.GRID_2}>
+                        <StatCard
+                            title="Середній рейтинг"
+                            value={stats.client_rating ? `${stats.client_rating}` : "—"}
+                        />
                         <StatCard
                             title="Середня дистанція"
                             value={stats.average_distance ? `${stats.average_distance} км` : "—"}

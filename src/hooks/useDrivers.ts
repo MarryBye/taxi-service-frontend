@@ -5,6 +5,9 @@ import * as driversApi from "@/api/worker";
 import * as driversTypes from "@/types/workers";
 
 import * as views from "@/types/views";
+import type {AddFunds} from "@/types/authorized";
+import * as authorizedApi from "@/api/authorized";
+import {withdraw_cash} from "@/api/worker";
 
 export function useDriverOrdersHistory() {
     return useApiQuery<views.OrdersView[]>(
@@ -94,4 +97,11 @@ export function useDriverStats() {
         () => driversApi.stats(),
         []
     );
+}
+
+export function useWithdrawCash() {
+    return useApiMutation<
+        driversTypes.WithdrawCashSchema,
+        any
+    >(driversApi.withdraw_cash);
 }

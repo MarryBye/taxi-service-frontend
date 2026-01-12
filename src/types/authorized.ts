@@ -27,3 +27,7 @@ export type UpdateProfile = {
     city_id: number;
     password: string;
 }
+
+export type AddFunds = {
+    amount: number;
+}

@@ -22,6 +22,7 @@ import MakeOrderPage from "@/pages/clients/MakeOrder";
 import UpdateProfilePage from "@/pages/clients/UpdateProfile";
 import OrdersHistoryPage from "@/pages/clients/OrdersHistory";
 import OrderDetailPage from "@/pages/clients/OrderDetail";
+import AddFundsPage from "@/pages/clients/AddFunds";
 
 /* WORKER */
 
@@ -29,6 +30,7 @@ import DriverHomePage from "@/pages/workers/Home";
 import DriverOrdersHistoryPage from "@/pages/workers/OrdersHistory";
 import DriverOrderDetailPage from "@/pages/workers/AcceptOrder";
 import DriverStatsPage from "@/pages/workers/Stats";
+import WithdrawCashPage from "@/pages/workers/WithdrawCash";
 
 /* ADMIN */
 
@@ -73,6 +75,7 @@ export function App() {
 
                 <Route path='/profile' element={<ProfilePage />} />
                 <Route path='/profile/edit' element={<UpdateProfilePage />} />
+                <Route path='/profile/add_funds' element={<AddFundsPage />} />
                 <Route path='/order' element={<MakeOrderPage />} />
                 <Route path='/orders/history' element={<OrdersHistoryPage />} />
                 <Route path='/orders/:orderId' element={<OrderDetailPage />} />
@@ -81,6 +84,7 @@ export function App() {
                 <Route path='/driver/history' element={<DriverOrdersHistoryPage />} />
                 <Route path='/driver/stats' element={<DriverStatsPage />} />
                 <Route path='/driver/orders/:orderId' element={<DriverOrderDetailPage />} />
+                <Route path='/driver/withdraw_cash' element={<WithdrawCashPage />} />
 
                 <Route path='/admin' element={<AdminDashboard />} />
                 <Route path='/admin/users' element={<AdminUsersListPage />} />

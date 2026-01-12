@@ -7,6 +7,7 @@ import * as authorizedApi from "@/api/authorized";
 import * as authorizedTypes from "@/types/authorized";
 
 import * as views from "@/types/views";
+import type {AddFunds} from "@/types/authorized";
 
 export function useProfile() {
     const setUser = useAuthStore((s) => s.setUser);
@@ -96,4 +97,11 @@ export function useClientStats() {
         () => authorizedApi.stats(),
         []
     );
+}
+
+export function useAddFunds() {
+    return useApiMutation<
+        authorizedTypes.AddFunds,
+        any
+    >(authorizedApi.add_funds);
 }

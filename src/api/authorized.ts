@@ -56,3 +56,9 @@ export const rate_order = async (
 export const stats = async (): Promise<views_schemas.ClientsStatView> => {
     return api.get('/client/stats')
 }
+
+export const add_funds = async (
+    data: client_schemas.AddFunds
+): Promise<any> => {
+    return api.put('/client/add_funds', data)
+}

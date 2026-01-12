@@ -15,6 +15,7 @@ import ClientCancelOrderForm from "@/components/forms/authorized/CancelOrderForm
 import ClientRateOrderForm from "@/components/forms/authorized/RateOrderForm";
 
 import type { CancelOrderSchema, RateOrderSchema } from "@/types/authorized";
+import {formatDuration} from "@/utils/helpers";
 
 export default function OrderDetailPage(): React.ReactElement {
     const navigate = useNavigate();
@@ -75,10 +76,7 @@ export default function OrderDetailPage(): React.ReactElement {
                 {/* ===== ORDER STAT ===== */}
                 <div className={`${styleSheet.containerStyles.CARD} mb-6`}>
                     <p className={styleSheet.textStyles.SMALL}>
-                        Тривалість:{" "}
-                        {orderStat.duration
-                            ? `${orderStat.duration} хв`
-                            : "—"}
+                        Тривалість: {formatDuration(orderStat.duration)}
                     </p>
 
                     {orderStat.cancel_info && (
