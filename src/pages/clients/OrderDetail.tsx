@@ -77,12 +77,44 @@ export default function OrderDetailPage(): React.ReactElement {
                     <p className={styleSheet.textStyles.SMALL}>
                         Дистанція: {orderInfo.route.distance} км
                     </p>
+
+                    <p className={styleSheet.textStyles.SUBTLE}>
+                        Водій: {orderInfo.driver ? (
+                            <p
+                                className={styleSheet.textStyles.DEFAULT}
+                            >
+                                <p>
+                                    {orderInfo.driver.first_name} {orderInfo.driver.last_name}
+                                </p>
+                                <p>
+                                    {orderInfo.driver.tel_number}
+                                </p>
+                            </p>
+                        ): ("Не призначено")}
+                    </p>
+
                     <p className={styleSheet.textStyles.SMALL}>
                         Клас авто: {orderInfo.order_class}
                     </p>
                     <p className={styleSheet.textStyles.SMALL}>
                         Вартість: {orderInfo.transaction.amount} грн
                     </p>
+
+                    <div>
+                        <p className={styleSheet.textStyles.SUBTLE}>Маршрут</p>
+                        <p className={styleSheet.textStyles.DEFAULT}>
+                            {orderInfo.route.start_location.country}, {orderInfo.route.start_location.city}, {orderInfo.route.start_location.street}, {orderInfo.route.start_location.house} → {orderInfo.route.end_location.country}, {orderInfo.route.end_location.city}, {orderInfo.route.end_location.street}, {orderInfo.route.end_location.house}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p className={styleSheet.textStyles.SUBTLE}>Повний маршрут</p>
+                        {orderInfo.route.all_addresses.map((address, i) => (
+                            <p className={styleSheet.textStyles.DEFAULT}>
+                                #{i + 1}, {address.country}, {address.city}, {address.street}, {address.house}
+                            </p>
+                        ))}
+                    </div>
                 </div>
 
                 {/* ===== ORDER STAT ===== */}

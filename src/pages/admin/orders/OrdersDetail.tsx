@@ -125,6 +125,15 @@ export default function AdminOrderDetailPage(): React.ReactElement {
                         </div>
 
                         <div>
+                            <p className={styleSheet.textStyles.SUBTLE}>Повний маршрут</p>
+                            {order.route.all_addresses.map((address, i) => (
+                                <p className={styleSheet.textStyles.DEFAULT}>
+                                    #{i + 1}, {address.country}, {address.city}, {address.street}, {address.house}
+                                </p>
+                            ))}
+                        </div>
+
+                        <div>
                             <p className={styleSheet.textStyles.SUBTLE}>Транзакція</p>
                             <p className={styleSheet.textStyles.DEFAULT}>
                                 <Link

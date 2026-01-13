@@ -17,6 +17,7 @@ export default function MakeOrderForm({
     const [form, setForm] = React.useState<MakeOrderSchema>({
         order_class: "standard",
         payment_method: "credit_card",
+        amount: 100,
         addresses: [
             {
                 country: user!.city.country.full_name,
@@ -42,6 +43,15 @@ export default function MakeOrderForm({
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         submitHandler(form);
+    }
+
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const { name, value } = e.target;
+
+        setForm(prev => ({
+            ...prev,
+            [name]: value,
+        }));
     }
 
     function handleRootChange(
@@ -132,6 +142,21 @@ export default function MakeOrderForm({
                         <option value="credit_card">Картка</option>
                         <option value="cash">Готівка</option>
                     </select>
+                </div>
+
+                <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
+                    <label className={styleSheet.textStyles.DEFAULT}>
+                        Бажана ціна:
+                    </label>
+
+                    <input
+                        type="number"
+                        name="amount"
+                        value={form.amount}
+                        placeholder="Ціна"
+                        onChange={handleChange}
+                        className={styleSheet.inputStyles.INPUT}
+                    />
                 </div>
 
                 <div className={styleSheet.containerStyles.SMALL_CONTAINER}>

@@ -9,6 +9,7 @@ export type CancelOrderSchema = {
 export type MakeOrderSchema = {
     order_class: enums.CarClasses;
     payment_method: enums.PaymentMethods;
+    amount: number;
     addresses: common.Address[];
 }
 
