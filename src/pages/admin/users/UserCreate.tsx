@@ -15,6 +15,13 @@ export default function AdminUserCreatePage(): React.ReactElement {
 
     return (
         <AdminLayout>
+            {error && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >
+                    {error.response.data.detail}
+                </p>
+            )}
             <section
                 className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
             >
@@ -66,8 +73,11 @@ export default function AdminUserCreatePage(): React.ReactElement {
                             tel_number,
                             city_id,
                             role,
+                        }).then((result) => {
+                            if (result) {
+                                navigate("/admin/users");
+                            }
                         });
-                        navigate('/admin/users')
                     }}
                 />
             </section>

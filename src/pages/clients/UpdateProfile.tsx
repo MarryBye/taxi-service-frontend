@@ -14,11 +14,20 @@ export default function UpdateProfilePage(): React.ReactElement {
 
     return (
         <DefaultLayout>
+            {error && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >{error.response.data.detail}</p>
+            )}
             <section className={styleSheet.contentStyles.SECTION_NARROW}>
                 <UpdateProfileForm
                     submitHandler={
                         (form: UpdateProfile): void => {
-                            mutate(form);
+                            mutate(form).then((result) => {
+                                if (result) {
+                                    navigate("/profile");
+                                }
+                            });
                         }
                     }
                 />

@@ -35,12 +35,12 @@ export default function DriverOrderDetailPage(): React.ReactElement {
         useDriverOrderStat(numericOrderId);
 
     /* ===== ACTIONS ===== */
-    const { mutate: acceptOrder } = useAcceptOrder(numericOrderId);
-    const { mutate: submitArrive } = useSubmitArrival(numericOrderId);
-    const { mutate: submitStart } = useSubmitStart(numericOrderId);
-    const { mutate: submitFinish } = useSubmitFinish(numericOrderId);
-    const { mutate: cancelOrder } = useDriverCancelOrder(numericOrderId);
-    const { mutate: rateOrder } = useDriverRateOrder(numericOrderId);
+    const { mutate: acceptOrder, error: acceptError } = useAcceptOrder(numericOrderId);
+    const { mutate: submitArrive, error: arriveError } = useSubmitArrival(numericOrderId);
+    const { mutate: submitStart, error: startError } = useSubmitStart(numericOrderId);
+    const { mutate: submitFinish, error: finishError } = useSubmitFinish(numericOrderId);
+    const { mutate: cancelOrder, error: cancelError } = useDriverCancelOrder(numericOrderId);
+    const { mutate: rateOrder, error: rateError } = useDriverRateOrder(numericOrderId);
 
     if (infoLoading || statLoading || !orderInfo || !orderStat) {
         return (
@@ -50,10 +50,26 @@ export default function DriverOrderDetailPage(): React.ReactElement {
         );
     }
 
+    const errors = [
+        rateError, cancelError, finishError, startError, arriveError, acceptError
+    ]
+
     const status = orderInfo.status;
 
     return (
         <DefaultLayout>
+            {
+                errors.map((error, index) => (
+                    error && (
+                        <p
+                            className={styleSheet.emphasisStyles.BOX_WARNING}
+                        >
+                            {error.response.data.detail}
+                        </p>
+                    )
+                ))
+            }
+
             <section className={styleSheet.contentStyles.SECTION_NARROW}>
 
                 <button
@@ -133,7 +149,13 @@ export default function DriverOrderDetailPage(): React.ReactElement {
                     {status === "searching_for_driver" && (
                         <PrimaryAction
                             label="Прийняти замовлення"
-                            onClick={acceptOrder}
+                            onClick={() => {
+                                acceptOrder().then((result) => {
+                                    if (result) {
+                                        navigate("/driver");
+                                    }
+                                });
+                            }}
                         />
                     )}
 
@@ -141,7 +163,13 @@ export default function DriverOrderDetailPage(): React.ReactElement {
                         <>
                             <PrimaryAction
                                 label="Приїхав на точку"
-                                onClick={submitArrive}
+                                onClick={() => {
+                                    submitArrive().then((result) => {
+                                        if (result) {
+                                            navigate("/driver");
+                                        }
+                                    });
+                                }}
                             />
                             <CancelBlock onSubmit={cancelOrder} />
                         </>
@@ -151,7 +179,13 @@ export default function DriverOrderDetailPage(): React.ReactElement {
                         <>
                             <PrimaryAction
                                 label="Почати поїздку"
-                                onClick={submitStart}
+                                onClick={() => {
+                                    submitStart().then((result) => {
+                                        if (result) {
+                                            navigate("/driver");
+                                        }
+                                    });
+                                }}
                             />
                             <CancelBlock onSubmit={cancelOrder} />
                         </>
@@ -161,7 +195,13 @@ export default function DriverOrderDetailPage(): React.ReactElement {
                         <>
                             <PrimaryAction
                                 label="Завершити поїздку"
-                                onClick={submitFinish}
+                                onClick={() => {
+                                    submitFinish().then((result) => {
+                                        if (result) {
+                                            navigate("/driver");
+                                        }
+                                    });
+                                }}
                             />
                             <CancelBlock onSubmit={cancelOrder} />
                         </>
@@ -169,8 +209,14 @@ export default function DriverOrderDetailPage(): React.ReactElement {
 
                     {status === "waiting_for_marks" && (
                         <WorkerRateOrderForm
-                            submitHandler={(form: RateOrderSchema) =>
-                                rateOrder(form)
+                            submitHandler={
+                                (form: RateOrderSchema) => {
+                                    rateOrder(form).then((result) => {
+                                        if (result) {
+                                            navigate("/driver");
+                                        }
+                                    });
+                                }
                             }
                         />
                     )}

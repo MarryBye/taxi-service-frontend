@@ -15,6 +15,13 @@ export default function AdminMaintenanceCreatePage(): React.ReactElement {
 
     return (
         <AdminLayout>
+            {error && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >
+                    {error.response.data.detail}
+                </p>
+            )}
             <section
                 className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
             >
@@ -46,8 +53,11 @@ export default function AdminMaintenanceCreatePage(): React.ReactElement {
 
                 <CreateMaintenanceForm
                     submitHandler={(form: CreateMaintenanceSchema) => {
-                        createMaintenance(form);
-                        navigate("/admin/maintenances");
+                        createMaintenance(form).then((result) => {
+                            if (result) {
+                                navigate("/admin/maintenances");
+                            }
+                        });
                     }}
                 />
             </section>

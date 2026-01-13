@@ -28,8 +28,8 @@ export default function OrderDetailPage(): React.ReactElement {
     const { data: orderStat, loading: statLoading } =
         useOrderStat(numericOrderId);
 
-    const { mutate: cancelOrder } = useCancelOrder(numericOrderId!);
-    const { mutate: rateOrder } = useRateOrder(numericOrderId!);
+    const { mutate: cancelOrder, error: cancelError } = useCancelOrder(numericOrderId!);
+    const { mutate: rateOrder, error: rateError } = useRateOrder(numericOrderId!);
 
     if (infoLoading || statLoading || !orderInfo || !orderStat) {
         return (
@@ -40,6 +40,7 @@ export default function OrderDetailPage(): React.ReactElement {
     }
 
     const status = orderInfo.status;
+    const errors = [cancelError, rateError]
 
     const canCancel = [
         "searching_for_driver",
@@ -49,6 +50,17 @@ export default function OrderDetailPage(): React.ReactElement {
 
     return (
         <DefaultLayout>
+            {
+                errors.map((error, index) => (
+                    error && (
+                        <p
+                            className={styleSheet.emphasisStyles.BOX_WARNING}
+                        >
+                            {error.response.data.detail}
+                        </p>
+                    )
+                ))
+            }
             <section className={styleSheet.contentStyles.SECTION}>
                 {/* ===== HEADER ===== */}
                 <div className="mb-6">
@@ -107,8 +119,14 @@ export default function OrderDetailPage(): React.ReactElement {
                     {canCancel && (
                         <div className={styleSheet.containerStyles.CARD}>
                             <ClientCancelOrderForm
-                                submitHandler={(form: CancelOrderSchema) =>
-                                    cancelOrder(form)
+                                submitHandler={
+                                    (form: CancelOrderSchema) => {
+                                        cancelOrder(form).then((result) => {
+                                            if (result) {
+                                                navigate("/orders/history");
+                                            }
+                                        });
+                                    }
                                 }
                             />
                         </div>
@@ -116,8 +134,14 @@ export default function OrderDetailPage(): React.ReactElement {
 
                     {status === "waiting_for_marks" && (
                         <ClientRateOrderForm
-                            submitHandler={(form: RateOrderSchema) =>
-                                rateOrder(form)
+                                submitHandler={
+                                    (form: RateOrderSchema) => {
+                                    rateOrder(form).then((result) => {
+                                        if (result) {
+                                            navigate("/orders/history");
+                                        }
+                                    });
+                                }
                             }
                         />
                     )}

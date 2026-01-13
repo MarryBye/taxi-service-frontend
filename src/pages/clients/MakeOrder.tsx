@@ -13,11 +13,20 @@ export default function MakeOrderPage(): React.ReactElement {
 
     return (
         <DefaultLayout>
+            {error && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >{error.response.data.detail}</p>
+            )}
             <section className={styleSheet.contentStyles.SECTION}>
                 <MakeOrderForm
                     submitHandler={
                         (form: MakeOrderSchema): void => {
-                            makeOrder(form);
+                            makeOrder(form).then((result) => {
+                                if (result) {
+                                    navigate("/orders/history");
+                                }
+                            });
                         }
                     }
                 />

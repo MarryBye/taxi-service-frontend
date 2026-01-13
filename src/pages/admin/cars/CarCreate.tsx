@@ -15,6 +15,13 @@ export default function AdminCarCreatePage(): React.ReactElement {
 
     return (
         <AdminLayout>
+            {error && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >
+                    {error.response.data.detail}
+                </p>
+            )}
             <section
                 className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
             >
@@ -66,9 +73,11 @@ export default function AdminCarCreatePage(): React.ReactElement {
                             car_class,
                             car_status,
                             driver_id
+                        }).then((result) => {
+                            if (result) {
+                                navigate("/admin/cars");
+                            }
                         });
-
-                        navigate("/admin/cars");
                     }}
                 />
             </section>

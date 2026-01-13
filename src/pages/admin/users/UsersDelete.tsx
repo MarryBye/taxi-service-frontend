@@ -18,7 +18,7 @@ export default function AdminUserDeletePage(): React.ReactElement {
     const id = userId ? Number(userId) : null;
 
     const { data: user, loading: userLoading, error: userError } = useUserInfo(id);
-    const { mutate: deleteUser, loading: deleteLoading } = useDeleteUser(id!);
+    const { mutate: deleteUser, loading: deleteLoading, error: deleteError } = useDeleteUser(id!);
 
     if (userLoading) {
         return (
@@ -39,12 +39,22 @@ export default function AdminUserDeletePage(): React.ReactElement {
     }
 
     async function handleDelete() {
-        await deleteUser();
-        navigate("/admin/users");
+        await deleteUser().then((result) => {
+            if (result) {
+                navigate("/admin/users");
+            }
+        });
     }
 
     return (
         <AdminLayout>
+            {deleteError && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >
+                    {deleteError.response.data.detail}
+                </p>
+            )}
             <section
                 className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-10`}
             >

@@ -149,9 +149,10 @@ export default function UpdateCarForm({
                     >
                         <option value="">— Без водія —</option> {/* ✅ очистка */}
                         {users?.map(user => (
-                            <option key={user.id} value={user.id}>
+                            user.role === 'driver' &&
+                            (<option key={user.id} value={user.id}>
                                 {user.first_name} {user.last_name} ({user.id})
-                            </option>
+                            </option>)
                         ))}
                     </select>
                 </div>

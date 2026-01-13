@@ -17,7 +17,7 @@ export default function AdminMaintenanceDeletePage(): React.ReactElement {
     const id = maintenanceId ? Number(maintenanceId) : null;
 
     const { data: maintenance, loading: maintenanceLoading, error: maintenanceError } = useMaintenanceInfo(id);
-    const { mutate: deleteMaintenance, loading: deleteLoading } = useDeleteMaintenance(id!);
+    const { mutate: deleteMaintenance, loading: deleteLoading, error: deleteError } = useDeleteMaintenance(id!);
 
     if (maintenanceLoading) {
         return (
@@ -38,12 +38,22 @@ export default function AdminMaintenanceDeletePage(): React.ReactElement {
     }
 
     async function handleDelete() {
-        await deleteMaintenance();
-        navigate("/admin/maintenances");
+        await deleteMaintenance().then((result) => {
+            if (result) {
+                navigate("/admin/maintenances");
+            }
+        });
     }
 
     return (
         <AdminLayout>
+            {deleteError && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >
+                    {deleteError.response.data.detail}
+                </p>
+            )}
             <section
                 className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-10`}
             >

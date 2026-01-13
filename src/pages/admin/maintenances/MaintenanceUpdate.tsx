@@ -45,6 +45,13 @@ export default function AdminMaintenanceUpdatePage(): React.ReactElement {
 
     return (
         <AdminLayout>
+            {updateError && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >
+                    {updateError.response.data.detail}
+                </p>
+            )}
             <section
                 className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
             >
@@ -78,8 +85,11 @@ export default function AdminMaintenanceUpdatePage(): React.ReactElement {
                     startValues={maintenance!}
                     submitHandler={
                         (form: UpdateMaintenanceSchema) => {
-                            updateMaintenance(form);
-                            navigate("/admin/maintenances");
+                            updateMaintenance(form).then((result) => {
+                                if (result) {
+                                    navigate("/admin/maintenances");
+                                }
+                            });
                         }
                     }
                 />

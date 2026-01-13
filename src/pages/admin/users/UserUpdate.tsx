@@ -46,6 +46,13 @@ export default function AdminUserUpdatePage(): React.ReactElement {
 
     return (
         <AdminLayout>
+            {updateError && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >
+                    {updateError.response.data.detail}
+                </p>
+            )}
             <section
                 className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
             >
@@ -94,8 +101,11 @@ export default function AdminUserUpdatePage(): React.ReactElement {
                                 tel_number,
                                 city_id,
                                 role
+                            }).then((result) => {
+                                if (result) {
+                                    navigate("/admin/users");
+                                }
                             });
-                            navigate('/admin/users')
                         }
                     }
                 />

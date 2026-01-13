@@ -17,7 +17,7 @@ export default function AdminCarDeletePage(): React.ReactElement {
     const id = carId ? Number(carId) : null;
 
     const { data: car, loading: carLoading, error: carError } = useCarInfo(id);
-    const { mutate: deleteCar, loading: deleteLoading } = useDeleteCar(id!);
+    const { mutate: deleteCar, loading: deleteLoading, error: deleteError } = useDeleteCar(id!);
 
     if (carLoading) {
         return (
@@ -38,12 +38,22 @@ export default function AdminCarDeletePage(): React.ReactElement {
     }
 
     async function handleDelete() {
-        await deleteCar();
-        navigate("/admin/cars");
+        await deleteCar().then((result) => {
+            if (result) {
+                navigate("/admin/cars");
+            }
+        });
     }
 
     return (
         <AdminLayout>
+            {deleteError && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >
+                    {deleteError.response.data.detail}
+                </p>
+            )}
             <section
                 className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-10`}
             >

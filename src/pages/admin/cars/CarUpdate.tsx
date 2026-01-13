@@ -45,6 +45,13 @@ export default function AdminCarUpdatePage(): React.ReactElement {
 
     return (
         <AdminLayout>
+            {updateError && (
+                <p
+                    className={styleSheet.emphasisStyles.BOX_WARNING}
+                >
+                    {updateError.response.data.detail}
+                </p>
+            )}
             <section
                 className={`${styleSheet.contentStyles.SECTION_NARROW} flex flex-col gap-8`}
             >
@@ -83,8 +90,11 @@ export default function AdminCarUpdatePage(): React.ReactElement {
                             } = form;
                             updateCar({
                                 mark, model, number_plate, city_id, color, car_class, car_status, driver_id
+                            }).then((result) => {
+                                if (result) {
+                                    navigate("/admin/cars");
+                                }
                             });
-                            navigate("/admin/cars");
                         }
                     }
                 />
