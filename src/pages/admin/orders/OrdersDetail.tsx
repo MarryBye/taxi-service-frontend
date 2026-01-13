@@ -9,6 +9,7 @@ import type { OrdersView, OrdersStatView } from "@/types/views";
 
 import { FaBackward } from "react-icons/fa";
 import { LoaderBlock } from "@/components/ui/Loader";
+import {formatDuration} from "@/utils/helpers";
 
 export default function AdminOrderDetailPage(): React.ReactElement {
     const { orderId } = useParams<{ orderId: string }>();
@@ -183,9 +184,7 @@ export default function AdminOrderDetailPage(): React.ReactElement {
                         <div>
                             <p className={styleSheet.textStyles.SUBTLE}>Тривалість</p>
                             <p className={styleSheet.textStyles.DEFAULT}>
-                                {orderStat.duration
-                                    ? `${orderStat.duration} хв`
-                                    : "—"}
+                                Тривалість: {formatDuration(orderStat.duration)}
                             </p>
                         </div>
 

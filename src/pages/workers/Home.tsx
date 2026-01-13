@@ -15,8 +15,7 @@ export default function DriverHomePage(): React.ReactElement {
     const { data: profile, loading: profileLoading } = useProfile();
     const { data: driverStats, loading: statsLoading } = useDriverStats();
     const { data: currentOrder } = useDriverCurrentOrder();
-    const { data: acceptableOrders, loading: acceptableLoading } =
-        useAcceptableOrders();
+    const { data: acceptableOrders, loading: acceptableLoading, error: acceptableError } = useAcceptableOrders();
 
     if (profileLoading || statsLoading || acceptableLoading) {
         return (
@@ -31,7 +30,7 @@ export default function DriverHomePage(): React.ReactElement {
         );
     }
 
-    if (!profile || !driverStats || !acceptableOrders) {
+    if (!profile || !driverStats) {
         return (
             <DriverLayout
                 left={null}

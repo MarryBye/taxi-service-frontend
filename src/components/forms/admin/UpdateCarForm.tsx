@@ -1,43 +1,37 @@
 import React from "react";
-import type {UpdateCarSchema, UpdateUserSchema} from "@/types/admin";
+import type { UpdateCarSchema } from "@/types/admin";
 
 import { styleSheet } from "@/styles/Form";
-import { useCountriesList } from "@/hooks/usePublic";
-import { useCitiesList } from "@/hooks/usePublic";
+import { useCountriesList, useCitiesList } from "@/hooks/usePublic";
 import { useUsersList } from "@/hooks/useAdmin";
-import type {CarsView} from "@/types/views";
+import type { CarsView } from "@/types/views";
 
 export default function UpdateCarForm({
                                           submitHandler,
-    startValues
+                                          startValues,
                                       }: {
     startValues?: CarsView;
     submitHandler: (form: UpdateCarSchema) => void;
 }): React.ReactElement {
 
     const [form, setForm] = React.useState<UpdateCarSchema>({
-        mark: startValues ? startValues.mark : "",
-        model: startValues ? startValues.model : "",
-        number_plate: startValues ? startValues.number_plate : "",
-        country_id: startValues ? startValues.city.country.id : 1,
-        city_id: startValues ? startValues.city.id : 1,
-        color: startValues ? startValues.color : "black",
-        car_class: startValues ? startValues.car_class : "standard",
-        car_status: startValues ? startValues.car_status : "available",
-        driver_id: startValues ?
-            startValues.driver ?
-                startValues.driver.id : 1
-            : 1,
+        mark: startValues?.mark ?? "",
+        model: startValues?.model ?? "",
+        number_plate: startValues?.number_plate ?? "",
+        country_id: startValues?.city.country.id ?? 1,
+        city_id: startValues?.city.id ?? 1,
+        color: startValues?.color ?? "black",
+        car_class: startValues?.car_class ?? "standard",
+        car_status: startValues?.car_status ?? "available",
+        driver_id: startValues?.driver?.id ?? null, // ✅ null если нет водителя
     });
 
-    const { data: users, loading: users_loading } = useUsersList();
-    const { data: countries, loading: countries_loading } = useCountriesList();
-    const { data: cities, loading: cities_loading } = useCitiesList(Number(form.country_id));
+    const { data: users, loading: usersLoading } = useUsersList();
+    const { data: countries, loading: countriesLoading } = useCountriesList();
+    const { data: cities, loading: citiesLoading } = useCitiesList(Number(form.country_id));
 
-    if (countries_loading || cities_loading || users_loading) {
-        return (
-            <div className={styleSheet.otherStyles.LOADER} />
-        );
+    if (usersLoading || countriesLoading || citiesLoading) {
+        return <div className={styleSheet.otherStyles.LOADER} />;
     }
 
     function handleSubmit(e: React.FormEvent) {
@@ -45,12 +39,17 @@ export default function UpdateCarForm({
         submitHandler(form);
     }
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    function handleChange(
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) {
         const { name, value } = e.target;
 
         setForm(prev => ({
             ...prev,
-            [name]: value,
+            [name]:
+                name === "driver_id"
+                    ? value === "" ? null : Number(value) // ✅ "" → null
+                    : value,
         }));
     }
 
@@ -58,14 +57,14 @@ export default function UpdateCarForm({
         setForm(prev => ({
             ...prev,
             country_id: Number(e.target.value),
-            city_id: -1
+            city_id: -1,
         }));
     }
 
     function selectCity(e: React.ChangeEvent<HTMLSelectElement>) {
         setForm(prev => ({
             ...prev,
-            city_id: Number(e.target.value)
+            city_id: Number(e.target.value),
         }));
     }
 
@@ -80,6 +79,7 @@ export default function UpdateCarForm({
                 className={styleSheet.containerStyles.SMALL_CONTAINER}
             >
 
+                {/* Марка / модель / номер */}
                 <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
                     <label className={styleSheet.textStyles.DEFAULT}>
                         Марка, модель, номер:
@@ -113,6 +113,7 @@ export default function UpdateCarForm({
                     </div>
                 </div>
 
+                {/* Колір */}
                 <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
                     <label className={styleSheet.textStyles.DEFAULT}>
                         Колір:
@@ -127,19 +128,14 @@ export default function UpdateCarForm({
                         <option value="red">Червоний</option>
                         <option value="blue">Синій</option>
                         <option value="green">Зелений</option>
-                        <option value="black">Блакитний</option>
+                        <option value="black">Чорний</option>
                         <option value="white">Білий</option>
-                        <option value="yellow">Жовтий</option>
-                        <option value="orange">Помаранчевий</option>
-                        <option value="purple">Фіолетовий</option>
-                        <option value="brown">Коричневий</option>
-                        <option value="pink">Рожевий</option>
                         <option value="gray">Сірий</option>
                         <option value="silver">Сріблястий</option>
-                        <option value="gold">Золотий</option>
                     </select>
                 </div>
 
+                {/* Водій */}
                 <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
                     <label className={styleSheet.textStyles.DEFAULT}>
                         Водій:
@@ -147,10 +143,11 @@ export default function UpdateCarForm({
 
                     <select
                         name="driver_id"
-                        value={form.driver_id}
+                        value={form.driver_id ?? ""}
                         onChange={handleChange}
                         className={styleSheet.inputStyles.SELECT}
                     >
+                        <option value="">— Без водія —</option> {/* ✅ очистка */}
                         {users?.map(user => (
                             <option key={user.id} value={user.id}>
                                 {user.first_name} {user.last_name} ({user.id})
@@ -159,6 +156,7 @@ export default function UpdateCarForm({
                     </select>
                 </div>
 
+                {/* Локація */}
                 <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
                     <label className={styleSheet.textStyles.DEFAULT}>
                         Місцезнаходження:
@@ -191,6 +189,7 @@ export default function UpdateCarForm({
                     </div>
                 </div>
 
+                {/* Клас / статус */}
                 <div className={styleSheet.containerStyles.SMALL_CONTAINER}>
                     <label className={styleSheet.textStyles.DEFAULT}>
                         Клас та статус:
